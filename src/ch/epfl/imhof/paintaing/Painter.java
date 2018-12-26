@@ -20,8 +20,8 @@ public interface Painter {
     static Painter outline(
             int lineWidth,
             Color lineColor,
-            LineStyle.Termination lineCap,
-            LineStyle.Joining lineJoin,
+            LineStyle.Cap lineCap,
+            LineStyle.Join lineJoin,
             float... dashingPattern) {
 
         return Painter.outline(new LineStyle(
@@ -48,8 +48,8 @@ public interface Painter {
 
     static Painter line(float lineWidth,
                         Color lineColor,
-                        LineStyle.Termination lineCap,
-                        LineStyle.Joining lineJoin,
+                        LineStyle.Cap lineCap,
+                        LineStyle.Join lineJoin,
                         float... dashingPattern) {
 
         return Painter.line(new LineStyle(

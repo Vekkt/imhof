@@ -3,50 +3,50 @@ package ch.epfl.imhof.paintaing;
 import ch.epfl.imhof.Preconditions;
 
 public final class LineStyle {
-    public enum Termination {
+    public enum Cap {
         BUTT,
         ROUND,
         SQUARE
     };
 
-    public enum Joining {
+    public enum Join {
         BEVEL,
         MITTER,
         ROUND
     };
 
     private Color color;
-    private Termination termination;
-    private Joining joining;
+    private Cap Cap;
+    private Join Join;
     private float stroke;
     private float[] pattern;
 
-    public LineStyle(Color color, Termination termination, Joining joining, float stroke, float[] pattern) {
+    public LineStyle(Color color, Cap Cap, Join Join, float stroke, float[] pattern) {
         Preconditions.checkArgument(stroke >= 0);
         for (float f: pattern)
             Preconditions.checkArgument(f <= 0);
 
         this.color = color;
-        this.termination = termination;
-        this.joining = joining;
+        this.Cap = Cap;
+        this.Join = Join;
         this.stroke = stroke;
         this.pattern = pattern;
     }
 
     public LineStyle(Color color, float stroke) {
-        this(color, Termination.BUTT, Joining.MITTER, stroke, new float[0]);
+        this(color, Cap.BUTT, Join.MITTER, stroke, new float[0]);
     }
 
     public Color getColor() {
         return color;
     }
 
-    public Termination getTermination() {
-        return termination;
+    public Cap getCap() {
+        return Cap;
     }
 
-    public Joining getJoining() {
-        return joining;
+    public Join getJoin() {
+        return Join;
     }
 
     public float getStroke() {
@@ -59,40 +59,40 @@ public final class LineStyle {
 
     public LineStyle withColor(Color color) {
         return new LineStyle(color,
-                this.termination,
-                this.joining,
+                this.Cap,
+                this.Join,
                 this.stroke,
                 this.pattern);
     }
 
-    public LineStyle withTermination(Termination termination) {
+    public LineStyle withCap(Cap Cap) {
         return new LineStyle(this.color,
-                termination,
-                this.joining,
+                Cap,
+                this.Join,
                 this.stroke,
                 this.pattern);
     }
 
-    public LineStyle withjoining(Joining joining) {
+    public LineStyle withJoin(Join Join) {
         return new LineStyle(this.color,
-                this.termination,
-                joining,
+                this.Cap,
+                Join,
                 this.stroke,
                 this.pattern);
     }
 
     public LineStyle withStroke(float stroke) {
         return new LineStyle(this.color,
-                this.termination,
-                this.joining,
+                this.Cap,
+                this.Join,
                 stroke,
                 this.pattern);
     }
 
     public LineStyle withPattern(float[] pattern) {
         return new LineStyle(this.color,
-                this.termination,
-                this.joining,
+                this.Cap,
+                this.Join,
                 this.stroke,
                 pattern);
     }

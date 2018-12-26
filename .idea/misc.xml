@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" default="false" project-jdk-name="1.8" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/out" />
+  </component>
+  <component name="SbtLocalSettings">
+    <option name="projectSyncType">
+      <map>
+        <entry key="$PROJECT_DIR$/../Scala/1. Functional Programming Principles in Scala/04_types-and-pattern-matching/01_types-and-pattern-matching/patmat" value="PREVIEW" />
+        <entry key="$PROJECT_DIR$/../Scala/Assignements/forcomp" value="PREVIEW" />
+        <entry key="$PROJECT_DIR$/../Scala/Assignements/objsets" value="PREVIEW" />
+      </map>
+    </option>
+  </component>
+  <component name="ScalaSbtSettings">
+    <option name="customVMPath" />
+  </component>
+</project>

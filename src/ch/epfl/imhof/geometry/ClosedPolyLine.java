@@ -8,7 +8,7 @@ public final class ClosedPolyLine extends PolyLine {
     }
 
     @Override
-    public final Boolean isClosed() {
+    public final boolean isClosed() {
         return true;
     }
 
@@ -24,31 +24,27 @@ public final class ClosedPolyLine extends PolyLine {
             area += x * (y2 - y1);
         }
 
-        return Math.abs(area) / 2.0;
+        return Math.abs(area) / 2d;
     }
 
     public final boolean containsPoint(Point p) {
         int index = 0;
-        Point p1, p2;
-
         for (int i = 0; i < points().size(); i++) {
-            p1 = getPoint(i);
-            p2 = getPoint(i + 1);
-
-
-            if (p1.y() <= p.y())
-                if (p2.y() > p.y() && isAtLeft(p, p1, p2))
-                    index += 1;
-            else
-                if (p2.y() <= p.y() && isAtLeft(p, p2, p1))
-                    index -= 1;
+            Point p1 = getPoint(i);
+            Point p2 = getPoint(i + 1);
+            if (p1.y() <= p.y()) {
+                if (p2.y() > p.y() && isAtLeft(p1, p2, p))
+                    index++;
+            } else {
+                if (p2.y() <= p.y() && isAtLeft(p2, p1, p))
+                    index--;
+            }
         }
-
         return index != 0;
     }
 
-    private boolean isAtLeft(Point p, Point p1, Point p2) {
-        return (p1.x() - p.x()) * (p2.y() - p.y()) >= (p2.x() - p.x()) * (p1.y() - p.y());
+    private boolean isAtLeft(Point p1, Point p2, Point p) {
+        return (p1.x() - p.x()) * (p2.y() - p.y()) > (p2.x() - p.x()) * (p1.y() - p.y());
     }
 
     private Point getPoint(int index) {

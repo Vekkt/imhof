@@ -10,7 +10,7 @@ public final class OpenPolyLine extends PolyLine {
     }
 
     @Override
-    public final Boolean isClosed() {
+    public final boolean isClosed() {
         return false;
     }
 }

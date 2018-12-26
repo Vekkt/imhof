@@ -11,7 +11,9 @@ import ch.epfl.imhof.paintaing.Filters;
 import ch.epfl.imhof.paintaing.Java2DCanvas;
 import ch.epfl.imhof.paintaing.Painter;
 import ch.epfl.imhof.projection.CH1903Projection;
+import org.junit.Ignore;
 import org.junit.Test;
+import org.xml.sax.SAXException;
 
 import javax.imageio.ImageIO;
 import java.io.File;
@@ -21,7 +23,7 @@ import java.util.function.Predicate;
 public class drawMapTest {
 
     @Test
-    public void mapIsCorrectlyDrawn() throws IOException {
+    public void mapIsCorrectlyDrawn() throws IOException, SAXException {
         // Le peintre et ses filtres
         Predicate<Attributed<?>> isLake =
                 Filters.tagged("natural", "water");
@@ -35,7 +37,7 @@ public class drawMapTest {
 
         Painter painter = buildingsPainter.above(lakesPainter);
 
-        OSMMap osmmap = OSMMapReader.readOSMFile("lausanne.osm.gz", true); // Lue depuis lausanne.osm.gz
+        OSMMap osmmap = OSMMapReader.readOSMFile("data/lausanne.osm.gz", true); // Lue depuis lausanne.osm.gz
         Map map = (new OSMToGeoTransformer(new CH1903Projection())).transform(osmmap);
 
         // La toile

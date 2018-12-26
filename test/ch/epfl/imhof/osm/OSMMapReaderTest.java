@@ -16,7 +16,7 @@ public class OSMMapReaderTest {
     public void simpleBuilding() {
         OSMMap testMapReadResult = null;
         try {
-            testMapReadResult = OSMMapReader.readOSMFile(getClass().getResource("/OSMtestFiles/testSimpleBuilding.osm").getFile(), false);
+            testMapReadResult = OSMMapReader.readOSMFile("/OSMtestFiles/testSimpleBuilding.osm", false);
         } catch (Exception e) {
             fail("Unable to recognise the file and/or read it properly.");
         }
@@ -30,7 +30,7 @@ public class OSMMapReaderTest {
     public void severalWalls() {
         OSMMap testMapReadResult = null;
         try {
-            testMapReadResult = OSMMapReader.readOSMFile(getClass().getResource("/OSMtestFiles/testSeveralWalls.osm").getFile(), false);
+            testMapReadResult = OSMMapReader.readOSMFile("/OSMtestFiles/testSeveralWalls.osm", false);
         } catch (Exception e) {
             fail("Unable to recognise the file and/or read it properly.");
         }
@@ -44,8 +44,9 @@ public class OSMMapReaderTest {
     public void roadWhole() {
         OSMMap testMapReadResult = null;
         try {
-            testMapReadResult = OSMMapReader.readOSMFile(getClass().getResource("/OSMtestFiles/testRoadWhole.osm").getFile(), false);
+            testMapReadResult = OSMMapReader.readOSMFile("/OSMtestFiles/testRoadWhole.osm", false);
         } catch (Exception e) {
+            System.out.println(e);
             fail("Unable to recognise the file and/or read it properly.");
         }
         assertEquals(1, testMapReadResult.ways().size());
@@ -58,7 +59,7 @@ public class OSMMapReaderTest {
     public void joinedBuildings() {
         OSMMap testMapReadResult = null;
         try {
-            testMapReadResult = OSMMapReader.readOSMFile(getClass().getResource("/OSMtestFiles/testJoinedBuildings.osm").getFile(), false);
+            testMapReadResult = OSMMapReader.readOSMFile("/OSMtestFiles/testJoinedBuildings.osm", false);
         } catch (Exception e) {
             fail("Unable to recognise the file and/or read it properly.");
         }
@@ -74,7 +75,7 @@ public class OSMMapReaderTest {
     public void buildingOnALandUse() {
         OSMMap testMapReadResult = null;
         try {
-            testMapReadResult = OSMMapReader.readOSMFile(getClass().getResource("/OSMtestFiles/testBuildingOnALandUse.osm").getFile(), false);
+            testMapReadResult = OSMMapReader.readOSMFile("/OSMtestFiles/testBuildingOnALandUse.osm", false);
         } catch (Exception e) {
             fail("Unable to recognise the file and/or read it properly.");
         }
@@ -99,7 +100,7 @@ public class OSMMapReaderTest {
     public void buildingOneInnerHole() {
         OSMMap testMapReadResult = null;
         try {
-            testMapReadResult = OSMMapReader.readOSMFile(getClass().getResource("OSMtestFiles/testBuildingMultipleHoles.osm").getFile(), false);
+            testMapReadResult = OSMMapReader.readOSMFile("OSMtestFiles/testBuildingMultipleHoles.osm", false);
         } catch (Exception e) {
             fail("Unable to recognise the file and/or read it properly.");
         }
@@ -113,7 +114,7 @@ public class OSMMapReaderTest {
     public void buildingMultipleHoles() {
         OSMMap testMapReadResult = null;
         try {
-            testMapReadResult = OSMMapReader.readOSMFile(getClass().getResource("OSMtestFiles/testBuildingMultipleHoles.osm").getFile(), false);
+            testMapReadResult = OSMMapReader.readOSMFile("OSMtestFiles/testBuildingMultipleHoles.osm", false);
         } catch (Exception e) {
             fail("Unable to recognise the file and/or read it properly.");
         }
@@ -127,7 +128,7 @@ public class OSMMapReaderTest {
     public void roads() {
         OSMMap testMapReadResult = null;
         try {
-            testMapReadResult = OSMMapReader.readOSMFile(getClass().getResource("OSMtestFiles/testRoads.osm").getFile(), false);
+            testMapReadResult = OSMMapReader.readOSMFile("OSMtestFiles/testRoads.osm", false);
         } catch (Exception e) {
             fail("Unable to recognise the file and/or read it properly.");
         }
@@ -144,7 +145,7 @@ public class OSMMapReaderTest {
     public void multipolygons() {
         OSMMap testMapReadResult = null;
         try {
-            testMapReadResult = OSMMapReader.readOSMFile(getClass().getResource("OSMtestFiles/testMultipolygons.osm").getFile(), false);
+            testMapReadResult = OSMMapReader.readOSMFile("OSMtestFiles/testMultipolygons.osm", false);
         } catch (Exception e) {
             fail("Unable to recognise the file and/or read it properly.");
         }
@@ -160,7 +161,7 @@ public class OSMMapReaderTest {
     public void DataCorrupted() {
         OSMMap testMapReadResult = null;
         try {
-            testMapReadResult = OSMMapReader.readOSMFile(getClass().getResource("OSMtestFiles/testDataCorrupted.osm").getFile(), false);
+            testMapReadResult = OSMMapReader.readOSMFile("OSMtestFiles/testDataCorrupted.osm", false);
         } catch (Exception e) {
             fail("Unable to recognise the file and/or read it properly.");
         }
@@ -173,7 +174,7 @@ public class OSMMapReaderTest {
         OSMMap testMapReadResult = null;
         final String attr = "";
         try {
-            testMapReadResult = OSMMapReader.readOSMFile(getClass().getResource("OSMtestFiles/testTypelessRelations.osm").getFile(), false);
+            testMapReadResult = OSMMapReader.readOSMFile("OSMtestFiles/testTypelessRelations.osm", false);
         } catch (Exception e) {
             fail("Unable to recognise the file and/or read it properly." + e);
         }
@@ -189,7 +190,7 @@ public class OSMMapReaderTest {
     public void gzipIsRespected(){
         OSMMap testMapReadResult = null;
         try {
-            testMapReadResult = OSMMapReader.readOSMFile(getClass().getResource("OSMtestFiles/testGZip.osm.gz").getFile(), true);
+            testMapReadResult = OSMMapReader.readOSMFile("OSMtestFiles/testGZip.osm.gz", true);
         } catch (Exception e) {
             fail("Unable to recognise the file and/or read it properly.");
         }
@@ -202,7 +203,7 @@ public class OSMMapReaderTest {
     public void onlyDefinedAttsUsed(){
         OSMMap testMapReadResult = null;
         try {
-            testMapReadResult = OSMMapReader.readOSMFile(getClass().getResource("OSMtestFiles/testUndefinedAtts.osm").getFile(), false);
+            testMapReadResult = OSMMapReader.readOSMFile("OSMtestFiles/testUndefinedAtts.osm", false);
         } catch (Exception e) {
             fail("Unable to recognise the file and/or read it properly.");
         }
@@ -223,7 +224,7 @@ public class OSMMapReaderTest {
     @Test
     public void learningCenter() {
     	try {
-			OSMMapReader.readOSMFile(getClass().getResource("OSMtestFiles/lc.osm.gz").getFile(), true);
+			OSMMapReader.readOSMFile("OSMtestFiles/lc.osm.gz", true);
 		} catch (Exception e) {
 		    fail("Unable to recognise the file and/or read it properly.");
 		}
@@ -236,7 +237,7 @@ public class OSMMapReaderTest {
 
     @Test (expected = SAXParseException.class)
     public void errorInFile() throws Exception{
-        OSMMapReader.readOSMFile(getClass().getResource("OSMtestFiles/testSimpleBuildingError.osm").getFile(), false);
+        OSMMapReader.readOSMFile("OSMtestFiles/testSimpleBuildingError.osm", false);
     }
 
 }

@@ -30,7 +30,7 @@ public abstract class PolyLine {
         }
     }
 
-    public abstract Boolean isClosed();
+    public abstract boolean isClosed();
 
     public List<Point> points() {
         return Collections.unmodifiableList(new ArrayList<>(points));

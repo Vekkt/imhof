@@ -20,15 +20,15 @@ public interface Painter {
     static Painter outline(
             int lineWidth,
             Color lineColor,
-            LineStyle.Cap lineCap,
-            LineStyle.Join lineJoin,
+            LineStyle.LineCap lineCap,
+            LineStyle.LineJoin lineJoin,
             float... dashingPattern) {
 
         return Painter.outline(new LineStyle(
+                lineWidth,
                 lineColor,
                 lineCap,
                 lineJoin,
-                lineWidth,
                 dashingPattern));
     }
 
@@ -48,15 +48,15 @@ public interface Painter {
 
     static Painter line(float lineWidth,
                         Color lineColor,
-                        LineStyle.Cap lineCap,
-                        LineStyle.Join lineJoin,
+                        LineStyle.LineCap lineCap,
+                        LineStyle.LineJoin lineJoin,
                         float... dashingPattern) {
 
         return Painter.line(new LineStyle(
+                lineWidth,
                 lineColor,
                 lineCap,
                 lineJoin,
-                lineWidth,
                 dashingPattern));
     }
 

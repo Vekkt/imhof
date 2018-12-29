@@ -43,9 +43,30 @@ public final class Java2DCanvas implements Canvas {
     }
 
     public void drawPolyLine(PolyLine p, LineStyle s) {
-        ctx.setColor(convert(s.getColor()));
+        Path2D polylinePath = createPathFromPolyLine(p);
+        if (p.isClosed()) polylinePath.closePath();
+        ctx.setColor(Color.convert(s.getColor()));
+        ctx.setStroke(new BasicStroke(
+                s.getStroke(),
+                s.getCap().ordinal(),
+                s.getJoin().ordinal(),
+                10.0f,
+                s.getPattern(),
+                0));
 
-        ctx.draw(getPath(p));
+        ctx.draw(polylinePath);
+    }
+
+    private Path2D createPathFromPolyLine(PolyLine p) {
+        Path2D path = new Path2D.Double();
+        Point firstPoint = coordChange.apply(p.firstPoint());
+        path.moveTo(firstPoint.x(), firstPoint.y());
+
+        for (Point pt : p.points().subList(1, p.points().size())) {
+            Point nextPoint = coordChange.apply(pt);
+            path.lineTo(nextPoint.x(), nextPoint.y());
+        }
+        return path;
     }
 
     private Path2D getPath(PolyLine polyline) {
@@ -75,20 +96,5 @@ public final class Java2DCanvas implements Canvas {
             polygon.subtract(new Area(getPath(hole)));
 
         ctx.fill(polygon);
-    }
-
-    public static void findDifferences(BufferedImage image, BufferedImage reference) throws IOException {
-        int diffs = 0;
-        for (int i = 0; i < reference.getWidth(); i++) {
-            for (int j = 0; j < reference.getHeight(); j++) {
-                if (image.getRGB(i, j) != reference.getRGB(i, j)) {
-                    reference.setRGB(i, j, 0xFF_00_00);
-                    diffs++;
-                }
-            }
-        }
-
-        ImageIO.write(reference, "png", new File("diffs.png"));
-        System.out.println(diffs + " different pixels found.");
     }
 }

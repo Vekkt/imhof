@@ -145,7 +145,7 @@ public final class OSMToGeoTransformer {
                 polygons.add(new Attributed<>(new Polygon(or), attributes));
             else
                 polygons.add(new Attributed<>(new Polygon(or, holes), attributes));
-
+            innerRings.removeAll(holes);
         }
         return polygons;
     }

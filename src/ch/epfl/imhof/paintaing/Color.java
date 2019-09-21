@@ -57,7 +57,7 @@ public final class Color {
         return this.blue;
     }
 
-    public Color mult(Color c1, Color c2) {
+    public static Color mult(Color c1, Color c2) {
         return new Color(c1.red() * c2.red(),
                 c1.green() * c2.green(),
                 c1.blue() * c2.blue());

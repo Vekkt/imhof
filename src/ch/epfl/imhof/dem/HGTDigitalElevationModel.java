@@ -62,10 +62,6 @@ public final class HGTDigitalElevationModel implements DigitalElevationModel {
         return i + SAMPLES_PER_DEGREE * j;
     }
 
-    private double index(double angle) {
-        return angle * SAMPLES_PER_DEGREE;
-    }
-
     @Override
     public void close() {
         buffer.clear();

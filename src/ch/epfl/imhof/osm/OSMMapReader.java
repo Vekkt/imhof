@@ -8,19 +8,25 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.helpers.XMLReaderFactory;
 
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 import java.io.*;
 import java.util.zip.GZIPInputStream;
 
 public final class OSMMapReader {
     private OSMMapReader() {}
 
-    public static OSMMap readOSMFile(String fileName, boolean unGZip) throws IOException, SAXException {
+    public static OSMMap readOSMFile(String fileName, boolean unGZip) throws IOException, SAXException, ParserConfigurationException {
+        System.out.println("Reading OSM file...");
         OSMMap.Builder mapBuilder = new OSMMap.Builder();
 
         try (InputStream i = unGZip ? new GZIPInputStream(new BufferedInputStream(new FileInputStream(fileName)))
                 : new BufferedInputStream(new FileInputStream(fileName))) {
 
-            XMLReader r = XMLReaderFactory.createXMLReader();
+            SAXParserFactory parserFactory = SAXParserFactory.newInstance();
+            SAXParser parser = parserFactory.newSAXParser();
+            XMLReader r = parser.getXMLReader();
 
             r.setContentHandler(new DefaultHandler() {
                 OSMEntity.Builder builder;

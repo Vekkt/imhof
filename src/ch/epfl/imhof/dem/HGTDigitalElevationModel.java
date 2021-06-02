@@ -3,7 +3,6 @@ package ch.epfl.imhof.dem;
 import ch.epfl.imhof.PointGeo;
 import ch.epfl.imhof.Vector3;
 import static ch.epfl.imhof.Preconditions.checkArgument;
-import static java.lang.Math.toDegrees;
 import static java.lang.Math.toRadians;
 
 import java.io.File;
@@ -12,10 +11,11 @@ import java.nio.ShortBuffer;
 import java.nio.channels.FileChannel;
 
 public final class HGTDigitalElevationModel implements DigitalElevationModel {
-    private final static double ANGULAR_RESOLUTION = toRadians(1 / 3600d);
-    private final static double SAMPLE_DISTANCE = Earth.RADIUS * ANGULAR_RESOLUTION;
-    private final static int SAMPLES_PER_DEGREE = 3600;
-    private final static int FILE_SIZE = 25_934_402;
+    private final static int    FILE_SIZE          = 25_934_402;
+    private final static int    SAMPLES_PER_DEGREE = 3600;
+    private final static double ANGULAR_RESOLUTION = toRadians(1. / SAMPLES_PER_DEGREE);
+    private final static double SAMPLE_DISTANCE    = Earth.RADIUS * ANGULAR_RESOLUTION;
+
     private int longitude, latitude;
     private ShortBuffer buffer;
 
@@ -38,24 +38,41 @@ public final class HGTDigitalElevationModel implements DigitalElevationModel {
         double lat = Math.toRadians(latitude);
         double lon = Math.toRadians(longitude);
 
-        int lo0 = (int) ((p.longitude() - lon) / ANGULAR_RESOLUTION);
-        int la0 = (int) ((p.latitude() - lat) / ANGULAR_RESOLUTION);
+        double iprec = ((p.longitude() - lon) / ANGULAR_RESOLUTION);
+        double jprec = ((p.latitude() - lat) / ANGULAR_RESOLUTION);
+        int i = (int) iprec;
+        int j = (int) jprec;
 
-        double z00 = buffer.get(flatIndex(lo0, la0));
-        double z10 = buffer.get(flatIndex(lo0 + 1, la0));
-        double z01 = buffer.get(flatIndex(lo0, la0 + 1));
-        double z11 = buffer.get(flatIndex(lo0 + 1, la0 + 1));
+        double z00 = buffer.get(flatIndex(i, j));
+        double z10 = buffer.get(flatIndex(i + 1, j));
+        double z01 = buffer.get(flatIndex(i, j + 1));
+        double z11 = buffer.get(flatIndex(i + 1, j + 1));
 
-        double dza = z10 - z00;
-        double dzb = z01 - z00;
-        double dzc = z01 - z11;
-        double dzd = z10 - z11;
+        Vector3 a = new Vector3(SAMPLE_DISTANCE, 0, z10 - z00);
+        Vector3 b = new Vector3(0, SAMPLE_DISTANCE, z01 - z00);
+        Vector3 c = new Vector3(-SAMPLE_DISTANCE, 0, z01 - z11);
+        Vector3 d = new Vector3(0, -SAMPLE_DISTANCE, z10 - z11);
 
-        double u = 0.5 * SAMPLE_DISTANCE * (dzc - dza);
-        double v = 0.5 * SAMPLE_DISTANCE * (dzd - dzb);
-        double w = SAMPLE_DISTANCE * SAMPLE_DISTANCE;
+        Vector3 n1 = a.prod(b);
+        Vector3 n2 = c.prod(d);
+        Vector3 n3 = d.prod(a);
+        Vector3 n4 = b.prod(c);
 
-        return new Vector3(u, v, w).normalized();
+        return interpolateVector(n1, n3, n2, n4, iprec-i, jprec-j).normalized();
+    }
+
+    private Vector3 interpolateVector(Vector3 bl, Vector3 br, Vector3 tr, Vector3 tl, double dx, double dy) {
+        return new Vector3(
+                bilinearInterpolation(bl.x(), br.x(), tr.x(), tl.x(), dx, dy),
+                bilinearInterpolation(bl.y(), br.y(), tr.y(), tl.y(), dx, dy),
+                bilinearInterpolation(bl.z(), br.z(), tr.z(), tl.z(), dx, dy)
+        );
+    }
+
+    private double bilinearInterpolation(double bl, double br, double tr, double tl, double dx, double dy) {
+        double deltafx = br - bl, deltafy = tl - bl;
+        double deltafxy = bl + tr - br - tl;
+        return deltafx * dx + deltafy * dy + deltafxy * dx * dy + bl;
     }
 
     private int flatIndex(int i, int j) {

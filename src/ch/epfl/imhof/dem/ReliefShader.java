@@ -52,11 +52,10 @@ public final class ReliefShader {
                 PointGeo p = proj.inverse(ref.apply(new Point(i, j)));
                 Vector3 slope = dem.normalAt(p);
 
-                float ctheta = (float) cos(light.scalarProduct(slope));
-                float rg = 0.5f * (1f + ctheta);
-                float b = 0.5f * (1 + 0.7f * ctheta);
+                float ctheta = (float) light.scalarProduct(slope);
+                float c = (6f + 3f * ctheta) / 9f;
 
-                img.setRGB(i, j, new Color(rg, rg, b).getRGB());
+                img.setRGB(i, j, new Color(c, c, c).getRGB());
             }
         }
         return img;

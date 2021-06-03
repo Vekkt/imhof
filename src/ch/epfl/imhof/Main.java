@@ -28,12 +28,12 @@ public final class Main {
 
 
     public static void main(String[] args) throws Exception {
-        PointGeo topRight = new PointGeo(Math.toRadians(Double
-                .parseDouble(args[4])), Math.toRadians(Double
-                .parseDouble(args[5])));
         PointGeo bottomLeft = new PointGeo(Math.toRadians(Double
                 .parseDouble(args[2])), Math.toRadians(Double
                 .parseDouble(args[3])));
+        PointGeo topRight = new PointGeo(Math.toRadians(Double
+                .parseDouble(args[4])), Math.toRadians(Double
+                .parseDouble(args[5])));
 
 
         int dpi = Integer.parseInt(args[6]);
@@ -73,23 +73,39 @@ public final class Main {
         DigitalElevationModel dem = new HGTDigitalElevationModel(new File(args[1]));
         ReliefShader reliefShader = new ReliefShader(projection, dem, LIGHT_SOURCE);
 
+        long startTime = System.nanoTime();
+        System.out.print("Reading OSM file... ");
         OSMMap osmMap = OSMMapReader.readOSMFile(args[0], true);
+        long elapsed = System.nanoTime() - startTime;
+        System.out.printf("Finish reading OSM file in %.2f s\n", elapsed * 1e-9);
+        startTime = System.nanoTime();
+        System.out.print("Creating object map... ");
         Map map = osmToGeoTransformer.transform(osmMap);
+        elapsed = System.nanoTime() - startTime;
+        System.out.printf("Object map done in %.2f s\n", elapsed * 1e-9);
 
         Java2DCanvas canvas = new Java2DCanvas(
                 projectedBottomLeft, projectedTopRight,
                 width, height, dpi, Color.WHITE);
 
+        startTime = System.nanoTime();
+        System.out.print("Drawing map... ");
         SwissPainter.painter().drawMap(map, canvas);
+        elapsed = System.nanoTime() - startTime;
+        System.out.printf("Drawing finished in %.2f s\n", elapsed * 1e-9);
 
+        startTime = System.nanoTime();
+        System.out.print("Generating Shadows... ");
         BufferedImage relief = reliefShader.shadedRelief(
                 projectedBottomLeft, projectedTopRight, width, height,
                 0.35f* 0.0017f * pixelPerMeterResolution);
+        elapsed = System.nanoTime() - startTime;
+        System.out.printf("Shadows finished in %.2f s\n", elapsed * 1e-9);
 
         dem.close();
 
         BufferedImage finalImage = combine(relief, canvas.image());
-        finalImage = Grid.drawGrid(finalImage, "Helvetica Neue", java.awt.Color.WHITE, dpi/200);
+//        finalImage = Grid.drawGrid(finalImage, "Helvetica Neue", java.awt.Color.WHITE, dpi/300);
 
         ImageIO.write(finalImage, "png", new File(args[7]));
     }

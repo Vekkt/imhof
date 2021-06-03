@@ -45,7 +45,7 @@ public final class ReliefShader {
     }
 
     private BufferedImage getRawRelief(int width, int height, Function<Point, Point> ref) {
-        BufferedImage img = new BufferedImage(width, height, TYPE_INT_RGB);
+        BufferedImage rawShade = new BufferedImage(width, height, TYPE_INT_RGB);
 
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
@@ -55,10 +55,10 @@ public final class ReliefShader {
                 float ctheta = (float) light.scalarProduct(slope);
                 float c = (6f + 3f * ctheta) / 9f;
 
-                img.setRGB(i, j, new Color(c, c, c).getRGB());
+                rawShade.setRGB(i, j, new Color(c, c, c).getRGB());
             }
         }
-        return img;
+        return rawShade;
     }
 
     private float[] shadingKernel(float radius) {

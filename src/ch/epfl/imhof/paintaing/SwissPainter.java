@@ -16,14 +16,18 @@ public final class SwissPainter {
         Color red = Color.RED;
         Color darkBlue = rgb(0, 0.49, 0.77);
         Color brown = rgb(0.68, 0.43, 0.16);
+        Color lightBrown = rgb(0.84, 0.85, 0.62);
         Color orange = rgb(1, 0.75, 0.2);
+        Color lightOrange = rgb(1, 0.95, 0.4);
 //        Color orange = rgb(0.97, 0.59, 0.12);
         Color lightRed = rgb(0.95, 0.7, 0.6);
 //        Color lightRed = rgb(0.96, 0.60, 0.65);
         Color yellow = rgb(0.97, 0.91, 0);
+        Color paleYellow = rgb(0.93, 0.94, 0.83);
         Color rose = rgb(0.76, 0.16, 0.46);
         Color lightRose = rgb(0.93, 0.66, 0.78);
         Color lightGreen = rgb(0.63, 0.81, 0.51);
+        Color paleGreen = rgb(0.78, 0.84, 0.67);
         Color lightBlue = rgb(0.84, 0.91, 0.98);
         Color white = Color.WHITE;
         Color lightYellow = rgb(1, 0.93, 0);
@@ -61,7 +65,11 @@ public final class SwissPainter {
                 .above(line(1, lightBlue).above(line(1.5f, darkBlue)).when(tagged("waterway", "river", "canal")))
                 .above(line(1, darkBlue).when(tagged("waterway", "stream")))
                 .above(polygon(forestGreen).when(tagged("natural", "wood").or(tagged("landuse", "forest"))))
+                .above(polygon(lightBrown).when(tagged("natural", "heath")))
+                .above(polygon(paleGreen).when(tagged("natural", "scrub")))
                 .above(polygon(lightGreen).when(tagged("landuse", "grass", "recreation_ground", "meadow", "cemetery").or(tagged("leisure", "park"))))
+                .above(polygon(paleYellow).when(tagged("landuse", "farmland")))
+                .above(polygon(lightOrange).when(tagged("landuse", "farmyard")))
                 .above(polygon(lightGray).when(tagged("landuse", "residential", "industrial")))
                 .layered();
 

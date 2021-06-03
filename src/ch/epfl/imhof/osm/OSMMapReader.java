@@ -18,7 +18,6 @@ public final class OSMMapReader {
     private OSMMapReader() {}
 
     public static OSMMap readOSMFile(String fileName, boolean unGZip) throws IOException, SAXException, ParserConfigurationException {
-        System.out.println("Reading OSM file...");
         OSMMap.Builder mapBuilder = new OSMMap.Builder();
 
         try (InputStream i = unGZip ? new GZIPInputStream(new BufferedInputStream(new FileInputStream(fileName)))
@@ -138,8 +137,6 @@ public final class OSMMapReader {
                 }
             });
             r.parse(new InputSource(i));
-
-            System.out.println("OSM map done !");
             return mapBuilder.build();
         }
     }

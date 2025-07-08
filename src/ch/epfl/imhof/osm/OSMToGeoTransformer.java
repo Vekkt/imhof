@@ -1,17 +1,17 @@
 package ch.epfl.imhof.osm;
 
-import ch.epfl.imhof.Attributed;
-import ch.epfl.imhof.Attributes;
-import ch.epfl.imhof.Graph;
+import ch.epfl.imhof.*;
+import ch.epfl.imhof.Map;
 import ch.epfl.imhof.geometry.ClosedPolyLine;
+import ch.epfl.imhof.geometry.OpenPolyLine;
 import ch.epfl.imhof.geometry.PolyLine;
 import ch.epfl.imhof.geometry.Polygon;
 import ch.epfl.imhof.projection.Projection;
-import ch.epfl.imhof.Map;
+
 import java.util.*;
 
 public final class OSMToGeoTransformer {
-    private Projection projection;
+    private final Projection projection;
 
     private static final Set<String> AREA_ATTS = new HashSet<>(
     Arrays.asList(
@@ -24,7 +24,7 @@ public final class OSMToGeoTransformer {
     private static final Set<String> POLYLINE_ATTS = new HashSet<>(
     Arrays.asList(
             "bridge", "highway", "layer", "man_made", "railway",
-            "tunnel", "waterway"
+            "tunnel", "waterway", "grid_line"
     ));
 
     private static final Set<String> POLYGON_ATTS = new HashSet<>(
@@ -70,7 +70,6 @@ public final class OSMToGeoTransformer {
                 }
             }
         }
-
         return mapBuilder.build();
     }
 

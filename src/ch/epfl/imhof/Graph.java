@@ -1,7 +1,5 @@
 package ch.epfl.imhof;
 
-import ch.epfl.imhof.osm.OSMNode;
-
 import java.util.*;
 import java.util.Map;
 

@@ -6,7 +6,7 @@ import java.util.Collections;
 import java.util.List;
 
 public abstract class PolyLine {
-    private List<Point> points;
+    private final List<Point> points;
 
     public PolyLine(List<Point> points) {
         Preconditions.checkArgument(!points.isEmpty());
@@ -15,7 +15,7 @@ public abstract class PolyLine {
     }
 
     public static final class Builder {
-        private List<Point> points = new ArrayList<>();
+        private final List<Point> points = new ArrayList<>();
 
         public void addPoint(Point newPoint) {
             this.points.add(newPoint);

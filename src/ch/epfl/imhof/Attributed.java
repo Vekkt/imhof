@@ -1,8 +1,8 @@
 package ch.epfl.imhof;
 
 public final class Attributed<T> {
-    private T value;
-    private Attributes attributes;
+    private final T value;
+    private final Attributes attributes;
 
     public Attributed(T value, Attributes attributes) {
         this.value = value;

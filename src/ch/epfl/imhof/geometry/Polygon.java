@@ -19,11 +19,11 @@ public final class Polygon {
         this.holes = new ArrayList<>();
     }
 
-    public final ClosedPolyLine shell() {
+    public ClosedPolyLine shell() {
         return this.shell;
     }
 
-    public final List<ClosedPolyLine> holes() {
+    public List<ClosedPolyLine> holes() {
         return Collections.unmodifiableList(new ArrayList<>(this.holes));
     }
 }

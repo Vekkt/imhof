@@ -8,11 +8,11 @@ public final class ClosedPolyLine extends PolyLine {
     }
 
     @Override
-    public final boolean isClosed() {
+    public boolean isClosed() {
         return true;
     }
 
-    public final double area() {
+    public double area() {
         double x, y1, y2;
         double area = 0;
 
@@ -27,7 +27,7 @@ public final class ClosedPolyLine extends PolyLine {
         return Math.abs(area) / 2d;
     }
 
-    public final boolean containsPoint(Point p) {
+    public boolean containsPoint(Point p) {
         int index = 0;
         for (int i = 0; i < points().size(); i++) {
             Point p1 = getPoint(i);

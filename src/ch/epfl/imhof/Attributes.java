@@ -11,23 +11,23 @@ public final class Attributes {
         this.attributes = new HashMap<>(attributes);
     }
 
-    public final boolean isEmpty() {
+    public boolean isEmpty() {
         return this.attributes.isEmpty();
     }
 
-    public final boolean contains(String key) {
+    public boolean contains(String key) {
         return this.attributes.containsKey(key);
     }
 
-    public final String get(String key) {
+    public String get(String key) {
         return this.attributes.getOrDefault(key, null);
     }
 
-    public final String get(String key, String defaultValue) {
+    public String get(String key, String defaultValue) {
         return this.attributes.getOrDefault(key, defaultValue);
     }
 
-    public final int get(String key, int defaultValue) {
+    public int get(String key, int defaultValue) {
         try {
             return Integer.parseInt(this.attributes.getOrDefault(key, Integer.toString(defaultValue)));
         } catch (NumberFormatException e) {
@@ -35,7 +35,7 @@ public final class Attributes {
         }
     }
 
-    public final Attributes keepOnlyKeys(Set<String> keysToKeep) {
+    public Attributes keepOnlyKeys(Set<String> keysToKeep) {
         HashMap<String, String> res = new HashMap<>();
 
         for (String entry : keysToKeep) {
@@ -46,13 +46,13 @@ public final class Attributes {
     }
 
     public final static class Builder {
-        private Map<String, String> attributes = new HashMap<>();
+        private final Map<String, String> attributes = new HashMap<>();
 
-        public final void put(String key, String value) {
+        public void put(String key, String value) {
             attributes.put(key, value);
         }
 
-        public final Attributes build() {
+        public Attributes build() {
             return new Attributes(attributes);
         }
     }

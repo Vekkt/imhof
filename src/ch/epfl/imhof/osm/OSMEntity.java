@@ -2,11 +2,9 @@ package ch.epfl.imhof.osm;
 
 import ch.epfl.imhof.Attributes;
 
-import java.util.HashMap;
-
 public abstract class OSMEntity {
-    private Attributes attributes;
-    private long id;
+    private final Attributes attributes;
+    private final long id;
 
     public OSMEntity(long id, Attributes attributes) {
         this.attributes = attributes;
@@ -31,8 +29,8 @@ public abstract class OSMEntity {
 
     public static class Builder {
         private boolean incomplete;
-        protected Attributes.Builder attributesBuilder;
-        protected long id;
+        protected final Attributes.Builder attributesBuilder;
+        protected final long id;
 
         public Builder(long id) {
             attributesBuilder = new Attributes.Builder();

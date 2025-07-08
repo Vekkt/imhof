@@ -18,9 +18,9 @@ import static java.lang.Math.*;
 import static java.util.Objects.requireNonNull;
 
 public final class ReliefShader {
-    private Projection proj;
-    private DigitalElevationModel dem;
-    private Vector3 light;
+    private final Projection proj;
+    private final DigitalElevationModel dem;
+    private final Vector3 light;
 
     public ReliefShader(Projection proj, DigitalElevationModel dem, Vector3 light) {
         this.proj = requireNonNull(proj);

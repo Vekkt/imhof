@@ -6,7 +6,6 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
-import org.xml.sax.helpers.XMLReaderFactory;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -34,37 +33,32 @@ public final class OSMMapReader {
                     String id = atts.getValue("id");
 
                     switch (qName) {
-                        case "node": {
+                        case "node" -> {
                             double lon = Math.toRadians(Double.parseDouble(atts.getValue("lon")));
                             double lat = Math.toRadians(Double.parseDouble(atts.getValue("lat")));
                             builder = new OSMNode.Builder(Long.parseLong(id), new PointGeo(lon, lat));
                         }
-                        break;
-                        case "way": {
+                        case "way" -> {
                             builder = new OSMWay.Builder(Long.parseLong(id));
                         }
-                        break;
-                        case "relation": {
+                        case "relation" -> {
                             builder = new OSMRelation.Builder(Long.parseLong(id));
                         }
-                        break;
-                        case "nd": {
+                        case "nd" -> {
                             long ref = Long.parseLong(atts.getValue("ref"));
                             if (mapBuilder.nodeForId(ref) == null)
                                 builder.setIncomplete();
                             else
                                 ((OSMWay.Builder) builder).addNode(mapBuilder.nodeForId(ref));
                         }
-                        break;
-                        case "tag": {
+                        case "tag" -> {
                             String key = atts.getValue("k");
                             if (key != null) {
                                 String value = atts.getValue("v");
                                 builder.setAttribute(key, value);
                             }
                         }
-                        break;
-                        case "member": {
+                        case "member" -> {
                             if (builder.isIncomplete())
                                 break;
 
@@ -73,7 +67,7 @@ public final class OSMMapReader {
                             long ref = Long.parseLong(atts.getValue("ref"));
 
                             switch (atts.getValue("type")) {
-                                case "way": {
+                                case "way" -> {
                                     if (mapBuilder.wayForId(ref) == null)
                                         builder.setIncomplete();
                                     else {
@@ -82,8 +76,7 @@ public final class OSMMapReader {
                                                 .addMember(type, role, mapBuilder.wayForId(ref));
                                     }
                                 }
-                                break;
-                                case "node": {
+                                case "node" -> {
                                     if (mapBuilder.nodeForId(ref) == null)
                                         builder.setIncomplete();
                                     else {
@@ -92,8 +85,7 @@ public final class OSMMapReader {
                                                 .addMember(type, role, mapBuilder.nodeForId(ref));
                                     }
                                 }
-                                break;
-                                case "relation": {
+                                case "relation" -> {
                                     if (mapBuilder.relationForId(ref) == null)
                                         builder.setIncomplete();
                                     else {
@@ -105,8 +97,7 @@ public final class OSMMapReader {
                             }
 
                         }
-                        break;
-                        default: {
+                        default -> {
 
                         }
                     }
@@ -116,19 +107,16 @@ public final class OSMMapReader {
                     if (qName.equals("way") || qName.equals("node") || qName.equals("relation")) {
                         if (builder != null && !builder.isIncomplete()) {
                             switch (qName) {
-                                case "node": {
+                                case "node" -> {
                                     mapBuilder.addNode(((OSMNode.Builder) builder).build());
                                 }
-                                break;
-                                case "way": {
+                                case "way" -> {
                                     mapBuilder.addWay(((OSMWay.Builder) builder).build());
                                 }
-                                break;
-                                case "relation": {
+                                case "relation" -> {
                                     mapBuilder.addRelation(((OSMRelation.Builder) builder).build());
                                 }
-                                break;
-                                default: {
+                                default -> {
 
                                 }
                             }

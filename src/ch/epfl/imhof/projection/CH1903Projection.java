@@ -5,7 +5,7 @@ import ch.epfl.imhof.PointGeo;
 
 public final class CH1903Projection implements Projection {
 
-    public final Point project(PointGeo point) {
+    public Point project(PointGeo point) {
         double lambda = (Math.toDegrees(point.longitude()) * 3600.0 - 26782.5) / 10000.0;
         double phi = (Math.toDegrees(point.latitude()) * 3600.0 - 169028.66) / 10000.0;
 
@@ -25,7 +25,7 @@ public final class CH1903Projection implements Projection {
         return new Point(x, y);
     }
 
-    public final PointGeo inverse(Point point) {
+    public PointGeo inverse(Point point) {
         double x = (point.x() - 600000.0) / 1000000.0;
         double y = (point.y() - 200000.0) / 1000000.0;
 

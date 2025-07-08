@@ -9,7 +9,7 @@ import ch.epfl.imhof.osm.OSMMap;
 import ch.epfl.imhof.osm.OSMMapReader;
 import ch.epfl.imhof.osm.OSMToGeoTransformer;
 import ch.epfl.imhof.paintaing.Color;
-import ch.epfl.imhof.paintaing.Grid;
+import ch.epfl.imhof.paintaing.Border;
 import ch.epfl.imhof.paintaing.Java2DCanvas;
 import ch.epfl.imhof.paintaing.SwissPainter;
 import ch.epfl.imhof.projection.CH1903Projection;
@@ -28,12 +28,12 @@ public final class Main {
 
 
     public static void main(String[] args) throws Exception {
-        PointGeo bottomLeft = new PointGeo(Math.toRadians(Double
-                .parseDouble(args[2])), Math.toRadians(Double
-                .parseDouble(args[3])));
-        PointGeo topRight = new PointGeo(Math.toRadians(Double
-                .parseDouble(args[4])), Math.toRadians(Double
-                .parseDouble(args[5])));
+        PointGeo bottomLeft = new PointGeo(
+                Math.toRadians(Double.parseDouble(args[2])),
+                Math.toRadians(Double.parseDouble(args[3])));
+        PointGeo topRight = new PointGeo(
+                Math.toRadians(Double.parseDouble(args[4])),
+                Math.toRadians(Double.parseDouble(args[5])));
 
 
         int dpi = Integer.parseInt(args[6]);
@@ -47,16 +47,11 @@ public final class Main {
         Projection projection;
 
         if (args.length > 8) {
-            switch (args[8]) {
-                case "CH1903":
-                    projection = new CH1903Projection();
-                    break;
-                case "Equirectangular":
-                    projection = new EquirectangularProjection();
-                    break;
-                default:
-                    throw new IllegalArgumentException("Nom de projection invalide.");
-            }
+            projection = switch (args[8]) {
+                case "CH1903" -> new CH1903Projection();
+                case "Equirectangular" -> new EquirectangularProjection();
+                default -> throw new IllegalArgumentException("Nom de projection invalide.");
+            };
         } else {
             projection = new CH1903Projection();
         }
@@ -105,7 +100,7 @@ public final class Main {
         dem.close();
 
         BufferedImage finalImage = combine(relief, canvas.image());
-//        finalImage = Grid.drawGrid(finalImage, "Helvetica Neue", java.awt.Color.WHITE, dpi/300);
+        finalImage = Border.drawBorder(finalImage);
 
         ImageIO.write(finalImage, "png", new File(args[7]));
     }

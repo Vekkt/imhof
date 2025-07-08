@@ -1,7 +1,6 @@
 package ch.epfl.imhof.osm;
 
 import ch.epfl.imhof.Attributes;
-import ch.epfl.imhof.Preconditions;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -20,9 +19,9 @@ public final class OSMRelation extends OSMEntity {
     }
 
     public static final class Member {
-        private Type type;
-        private String role;
-        private OSMEntity member;
+        private final Type type;
+        private final String role;
+        private final OSMEntity member;
 
         public Member(Type type, String role, OSMEntity member) {
             this.type = type;

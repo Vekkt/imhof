@@ -8,7 +8,7 @@ import java.util.Collections;
 import java.util.List;
 
 public final class OSMWay extends OSMEntity {
-    private List<OSMNode> nodes;
+    private final List<OSMNode> nodes;
 
     public OSMWay(long id, List<OSMNode> nodes, Attributes attributes) {
         super(id, attributes);
@@ -44,7 +44,7 @@ public final class OSMWay extends OSMEntity {
     }
 
     public static final class Builder extends OSMEntity.Builder {
-        private List<OSMNode> nodes = new ArrayList<>();
+        private final List<OSMNode> nodes = new ArrayList<>();
 
         public Builder(long id) {
             super(id);

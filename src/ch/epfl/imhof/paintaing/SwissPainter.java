@@ -13,6 +13,7 @@ public final class SwissPainter {
 
     static {
         Color black = Color.BLACK;
+        Color gray = gray(0.5);
         Color red = Color.RED;
         Color darkBlue = rgb(0, 0.49, 0.77);
         Color brown = rgb(0.68, 0.43, 0.16);
@@ -38,6 +39,8 @@ public final class SwissPainter {
         Color darkRed = rgb(0.7, 0.15, 0.15);
         Color lightGray = gray(0.9);
 
+        Painter gridPainter = line(0.5f, gray).when(tagged("grid_line", "yes"));
+
         Painter roadPainter = RoadPainterGenerator.painterForRoads(
                 new RoadSpec(tagged("highway", "motorway", "trunk"), 2, orange, 0.5f, black),
                 new RoadSpec(tagged("highway", "primary"), 1.7f, lightRed, 0.35f, black),
@@ -50,7 +53,7 @@ public final class SwissPainter {
                 new RoadSpec(tagged("highway", "service", "pedestrian"), 0.5f, white, 0.15f, black));
 
         Painter fgPainter =
-                roadPainter
+                gridPainter.above(roadPainter)
                 .above(line(0.5f, black, LineStyle.LineCap.Round, LineStyle.LineJoin.Miter, 1f, 2f).when(tagged("highway", "footway", "steps", "path", "track", "cycleway")))
                 .above(polygon(black).when(tagged("building")))
                 .above(polygon(lightBlue).when(tagged("leisure", "swimming_pool")))

@@ -17,11 +17,11 @@ public final class LineStyle {
         Round
     }
 
-    private Color color;
-    private LineCap cap;
-    private LineJoin join;
-    private float stroke;
-    private float[] pattern;
+    private final Color color;
+    private final LineCap cap;
+    private final LineJoin join;
+    private final float stroke;
+    private final float[] pattern;
 
     public LineStyle(float stroke, Color color, LineCap cap, LineJoin join, float... pattern) {
         Preconditions.checkArgument(stroke >= 0);

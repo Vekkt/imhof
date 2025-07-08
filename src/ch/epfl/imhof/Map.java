@@ -40,4 +40,8 @@ public record Map(List<Attributed<PolyLine>> polyLines, List<Attributed<Polygon>
             return new Map(this.polyLines, this.polygons);
         }
     }
+
+    public void addGrid(Grid grid) {
+        this.polyLines.addAll(grid.getLines());
+    }
 }

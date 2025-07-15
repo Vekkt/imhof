@@ -61,6 +61,8 @@ public final class SwissPainter {
                 .above(line(0.5f, darkRed).when(tagged("railway", "subway", "narrow_gauge", "light_rail")))
                 .above(polygon(lightGreen).when(tagged("leisure", "pitch")))
                 .above(line(1, black).when(tagged("man_made", "pier")))
+                .above(line(0.5f, brown).when(tagged("major_contour")))
+                .above(line(0.5f, orange).when(tagged("minor_contour")))
                 .layered();
 
         Painter bgPainter =

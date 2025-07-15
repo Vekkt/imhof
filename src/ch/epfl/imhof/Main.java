@@ -1,5 +1,6 @@
 package ch.epfl.imhof;
 
+import ch.epfl.imhof.contours.Contours;
 import ch.epfl.imhof.dem.DigitalElevationModel;
 import ch.epfl.imhof.dem.Earth;
 import ch.epfl.imhof.dem.HGTDigitalElevationModel;
@@ -77,8 +78,11 @@ public final class Main {
         System.out.print("Creating object map... ");
         Map map = osmToGeoTransformer.transform(osmMap);
 
-        Grid grid = new Grid(projection, bottomLeft, topRight);
+        Grid grid = new Grid(projectedBottomLeft, projectedTopRight);
         map.addGrid(grid);
+
+        Contours contours = new Contours(projection, dem, projectedBottomLeft, projectedTopRight, width * 2, height * 2);
+        map.addContours(contours);
 
         elapsed = System.nanoTime() - startTime;
         System.out.printf("Object map done in %.2f s\n", elapsed * 1e-9);
@@ -97,7 +101,7 @@ public final class Main {
         System.out.print("Generating Shadows... ");
         BufferedImage relief = reliefShader.shadedRelief(
                 projectedBottomLeft, projectedTopRight, width, height,
-                0.35f* 0.0017f * pixelPerMeterResolution);
+                0.35f * 0.0017f * pixelPerMeterResolution);
         elapsed = System.nanoTime() - startTime;
         System.out.printf("Shadows finished in %.2f s\n", elapsed * 1e-9);
 

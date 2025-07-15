@@ -1,103 +1,123 @@
 package ch.epfl.imhof.dem;
 
 import ch.epfl.imhof.PointGeo;
+import ch.epfl.imhof.Preconditions;
 import ch.epfl.imhof.Vector3;
-import static ch.epfl.imhof.Preconditions.checkArgument;
-import static java.lang.Math.toRadians;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.nio.ShortBuffer;
-import java.nio.channels.FileChannel;
+import java.nio.channels.FileChannel.MapMode;
+import java.util.HashMap;
+import java.util.Map;
 
 public final class HGTDigitalElevationModel implements DigitalElevationModel {
-    private final static int    FILE_SIZE          = 25_934_402;
-    private final static int    SAMPLES_PER_DEGREE = 3600;
-    private final static double ANGULAR_RESOLUTION = toRadians(1. / SAMPLES_PER_DEGREE);
-    private final static double SAMPLE_DISTANCE    = Earth.RADIUS * ANGULAR_RESOLUTION;
 
-    private int longitude, latitude;
     private ShortBuffer buffer;
+    private final FileInputStream stream;
+    private final Map<Integer, Vector3> normalMap;
+    private final double s;
+    private final double s_2;
+    private final int latitude;
+    private final int longitude;
+    private final int sideLength;
 
-    public HGTDigitalElevationModel(File file) throws Exception {
-        checkArgument(file.length() == FILE_SIZE, "invalid file size");
-        checkArgument(isNameValid(file.getName()), "invalid file name");
+    public HGTDigitalElevationModel(File file) throws IOException, IllegalArgumentException {
+        String fileName = file.getName();
 
-        longitude = file.getName().charAt(0) == 'S' ? (-1)*longitude : longitude;
-        latitude = file.getName().charAt(3) == 'S' ? (-1)*latitude : latitude;
+        Preconditions.checkArgument(!fileName.matches("[NS]\\d{2}[EW]\\d{3}\\.hgt"), "Invalid file name.");
 
-        try (FileInputStream s = new FileInputStream(file)) {
-            buffer = s.getChannel()
-                    .map(FileChannel.MapMode.READ_ONLY, 0, file.length())
-                    .asShortBuffer();
-        }
+        long length = file.length();
+        Preconditions.checkArgument(((Math.sqrt(length / 2d) - 1)) % 1 != 0,"Invalid file size.");
+        sideLength = (int) (Math.sqrt(length / 2d) - 1);
+
+        longitude = ((fileName.charAt(0) == 'S') ? -1 : 1) * Integer.parseInt(fileName.substring(4, 7));
+        latitude = ((fileName.charAt(0) == 'S') ? -1 : 1) * Integer.parseInt(fileName.substring(1, 3));
+
+        Preconditions.inCloseBounds(-180, longitude, 180);
+        Preconditions.inCloseBounds(-90, latitude, 90);
+
+        normalMap = new HashMap<>();
+        stream = new FileInputStream(file);
+        s = Earth.RADIUS * Math.toRadians(1. / sideLength);
+        s_2 = s * s * 8;
+        buffer = stream.getChannel().map(MapMode.READ_ONLY, 0, length).asShortBuffer();
+    }
+
+    @Override
+    public void close() throws IOException {
+        stream.close();
+        buffer = null;
     }
 
     @Override
     public Vector3 normalAt(PointGeo p) throws IllegalArgumentException {
-        double lat = Math.toRadians(latitude);
-        double lon = Math.toRadians(longitude);
+        FileCoords preciseCoords = getGetFileCoords(p);
 
-        double iprec = ((p.longitude() - lon) / ANGULAR_RESOLUTION);
-        double jprec = ((p.latitude() - lat) / ANGULAR_RESOLUTION);
-        int i = (int) iprec;
-        int j = (int) jprec;
+        int i = (int) preciseCoords.preciseI();
+        int j = (int) preciseCoords.preciseJ();
 
-        double z00 = buffer.get(flatIndex(i, j));
-        double z10 = buffer.get(flatIndex(i + 1, j));
-        double z01 = buffer.get(flatIndex(i, j + 1));
-        double z11 = buffer.get(flatIndex(i + 1, j + 1));
+        Vector3 topLeft = getVertexNormal(i, j + 1);
+        Vector3 topRight = getVertexNormal(i + 1, j + 1);
+        Vector3 bottomLeft = getVertexNormal(i, j);
+        Vector3 bottomRight = getVertexNormal(i + 1, j);
 
-        Vector3 a = new Vector3(SAMPLE_DISTANCE, 0, z10 - z00);
-        Vector3 b = new Vector3(0, SAMPLE_DISTANCE, z01 - z00);
-        Vector3 c = new Vector3(-SAMPLE_DISTANCE, 0, z01 - z11);
-        Vector3 d = new Vector3(0, -SAMPLE_DISTANCE, z10 - z11);
-
-        Vector3 n1 = a.prod(b);
-        Vector3 n2 = c.prod(d);
-        Vector3 n3 = d.prod(a);
-        Vector3 n4 = b.prod(c);
-
-        return interpolateVector(n1, n3, n2, n4, iprec-i, jprec-j).normalized();
+        return interpolatedVector(bottomLeft, bottomRight, topLeft, topRight,
+                preciseCoords.preciseI() - i, preciseCoords.preciseJ() - j);
     }
 
-    private Vector3 interpolateVector(Vector3 bl, Vector3 br, Vector3 tr, Vector3 tl, double dx, double dy) {
+    private FileCoords getGetFileCoords(PointGeo p) {
+        double pointLatitude = Math.toDegrees(p.latitude());
+        double pointLongitude = Math.toDegrees(p.longitude());
+
+        Preconditions.inCloseBounds(pointLatitude, latitude, pointLatitude-1);
+        Preconditions.inCloseBounds(pointLongitude, longitude, pointLongitude - 1);
+
+        double preciseI = (pointLongitude - longitude) * sideLength;
+        double preciseJ = (pointLatitude - latitude) * sideLength;
+        return new FileCoords(preciseI, preciseJ);
+    }
+
+    private record FileCoords(double preciseI, double preciseJ) {}
+
+    private Vector3 getVertexNormal(int i, int j) {
+        double h1 = bufferAt(i + 1, j) * 2;
+        double h2 = bufferAt(i + 1, j + 1);
+        double h3 = bufferAt(i, j + 1) * 2;
+        double h4 = bufferAt(i - 1, j + 1);
+        double h5 = bufferAt(i - 1, j) * 2;
+        double h6 = bufferAt(i - 1, j - 1);
+        double h7 = bufferAt(i, j - 1) * 2;
+        double h8 = bufferAt(i + 1, j - 1);
+
+        return normalMap.computeIfAbsent(indexOf(i, j), k ->
+                new Vector3(s * (h5 + h6 + h4 - h1 - h2 - h8), s * (h7 + h6 + h8 - h3 - h2 - h4), s_2).normalized());
+    }
+
+    private Vector3 interpolatedVector(Vector3 bl, Vector3 br, Vector3 tl, Vector3 tr, double dx, double dy) {
         return new Vector3(
-                bilinearInterpolation(bl.x(), br.x(), tr.x(), tl.x(), dx, dy),
-                bilinearInterpolation(bl.y(), br.y(), tr.y(), tl.y(), dx, dy),
-                bilinearInterpolation(bl.z(), br.z(), tr.z(), tl.z(), dx, dy)
-        );
+                bilinearInterpolation(bl.x(), br.x(), tl.x(), tr.x(), dx, dy),
+                bilinearInterpolation(bl.y(), br.y(), tl.y(), tr.y(), dx, dy),
+                bilinearInterpolation(bl.z(), br.z(), tl.z(), tr.z(), dx, dy));
     }
 
-    private double bilinearInterpolation(double bl, double br, double tr, double tl, double dx, double dy) {
-        double deltafx = br - bl, deltafy = tl - bl;
-        double deltafxy = bl + tr - br - tl;
-        return deltafx * dx + deltafy * dy + deltafxy * dx * dy + bl;
+    private double bilinearInterpolation(double bl, double br, double tl, double tr, double dx, double dy) {
+        double r1 = bl * (1 - dx) + br * dx;
+        double r2 = tl * (1 - dx) + tr * dx;
+        return r1 * (1 - dy) + r2 * dy;
     }
 
-    private int flatIndex(int i, int j) {
-        return i + SAMPLES_PER_DEGREE * j;
+    private short bufferAt(int i, int j) {
+        return buffer.get(indexOf(i, j));
     }
 
-    @Override
-    public void close() {
-        buffer.clear();
-        buffer = null;
+    public short bufferAt(PointGeo p) {
+        FileCoords preciseCoords = getGetFileCoords(p);
+        return bufferAt((int) preciseCoords.preciseI(), (int) preciseCoords.preciseJ());
     }
-
-    private boolean isNameValid(String name) {
-        try {
-            latitude = Integer.parseInt(name.substring(1, 3));
-            longitude = Integer.parseInt(name.substring(4, 7));
-
-            return (name.length() == 11)
-                    && (name.charAt(0) == 'N' || name.charAt(0) == 'S')
-                    && (0 <= longitude && longitude <= 180)
-                    && (name.charAt(3) == 'E' || name.charAt(3) == 'W')
-                    && (0 <= latitude && latitude <= 90)
-                    && (name.substring(7).equals(".hgt"));
-        } catch (NumberFormatException e) {
-            throw new IllegalArgumentException();
-        }
+    
+    private int indexOf(int i, int j) {
+        return (sideLength - j) * (sideLength + 1) + i;
     }
 }

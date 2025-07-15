@@ -1,5 +1,6 @@
 package ch.epfl.imhof;
 
+import ch.epfl.imhof.contours.Contours;
 import ch.epfl.imhof.geometry.PolyLine;
 import ch.epfl.imhof.geometry.Polygon;
 import ch.epfl.imhof.projection.Projection;
@@ -43,5 +44,9 @@ public record Map(List<Attributed<PolyLine>> polyLines, List<Attributed<Polygon>
 
     public void addGrid(Grid grid) {
         this.polyLines.addAll(grid.getLines());
+    }
+
+    public void addContours(Contours contours) {
+        this.polyLines.addAll(contours.getContourLines());
     }
 }

@@ -26,10 +26,10 @@ public final class HGTDigitalElevationModel implements DigitalElevationModel {
     public HGTDigitalElevationModel(File file) throws IOException, IllegalArgumentException {
         String fileName = file.getName();
 
-        Preconditions.checkArgument(!fileName.matches("[NS]\\d{2}[EW]\\d{3}\\.hgt"), "Invalid file name.");
+        Preconditions.checkArgument(fileName.matches("[NS]\\d{2}[EW]\\d{3}\\.hgt"), "Invalid file name.");
 
         long length = file.length();
-        Preconditions.checkArgument(((Math.sqrt(length / 2d) - 1)) % 1 != 0,"Invalid file size.");
+        Preconditions.checkArgument(((Math.sqrt(length / 2d) - 1)) % 1 == 0,"Invalid file size.");
         sideLength = (int) (Math.sqrt(length / 2d) - 1);
 
         longitude = ((fileName.charAt(0) == 'S') ? -1 : 1) * Integer.parseInt(fileName.substring(4, 7));
@@ -71,8 +71,8 @@ public final class HGTDigitalElevationModel implements DigitalElevationModel {
         double pointLatitude = Math.toDegrees(p.latitude());
         double pointLongitude = Math.toDegrees(p.longitude());
 
-        Preconditions.inCloseBounds(pointLatitude, latitude, pointLatitude-1);
-        Preconditions.inCloseBounds(pointLongitude, longitude, pointLongitude - 1);
+        Preconditions.inCloseBounds(pointLatitude - 1, latitude, pointLatitude);
+        Preconditions.inCloseBounds(pointLongitude - 1, longitude, pointLongitude);
 
         double preciseI = (pointLongitude - longitude) * sideLength;
         double preciseJ = (pointLatitude - latitude) * sideLength;
@@ -116,7 +116,7 @@ public final class HGTDigitalElevationModel implements DigitalElevationModel {
         FileCoords preciseCoords = getGetFileCoords(p);
         return bufferAt((int) preciseCoords.preciseI(), (int) preciseCoords.preciseJ());
     }
-    
+
     private int indexOf(int i, int j) {
         return (sideLength - j) * (sideLength + 1) + i;
     }

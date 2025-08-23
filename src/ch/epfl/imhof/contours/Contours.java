@@ -123,7 +123,7 @@ public class Contours {
     
     private Attributed<PolyLine> buildLevelSubContour(IsoCell[][] levelContours, int i, int j, Function<Point, Point> ref, double level) {
         Attributes contourAttributes = new Attributes(
-                Collections.singletonMap((((int) level) % 100 == 0) ? "major_contour": "minor_contour", "")
+                Collections.singletonMap((((int) level) % 200 == 0) ? "major_contour": "minor_contour", "")
         );
         PolyLine.Builder polyLineBuilder = new PolyLine.Builder();
 

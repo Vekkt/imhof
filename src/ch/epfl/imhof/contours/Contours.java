@@ -17,36 +17,71 @@ import java.util.function.Function;
 import static ch.epfl.imhof.geometry.Point.alignedCoordinateChange;
 import static java.util.Objects.requireNonNull;
 
-public class Contours {
+
+final class ElevationView {
+    private final Projection projection;
+    private final DigitalElevationModel dem;
+    Function<Point, Point> coordinateChange;
+    private final int width;
+    private final int height;
+
+    ElevationView(Projection proj, DigitalElevationModel dem, int width, int height, Function<Point, Point> ref) {
+        this.projection = requireNonNull(proj);
+        this.dem = requireNonNull(dem);
+        this.coordinateChange = requireNonNull(ref);
+        this.width = width;
+        this.height = height;
+
+    }
+
+    public int width() { return width; }
+    public int height() { return height; }
+
+    private double safeBufferAt(int i, int j) {
+        if (i >= width || j >= height || i < 0 || j < 0) {
+            return Double.MIN_VALUE;
+        }
+        PointGeo p = projection.inverse(coordinateChange.apply(new Point(i, j)));
+        return dem.bufferAt(p);
+    }
+
+    public double[] getPaddedElevation(int i, int j) {
+        return new double[]{
+                safeBufferAt(i, j),
+                safeBufferAt(i + 1, j),
+                safeBufferAt(i, j + 1),
+                safeBufferAt(i + 1, j + 1),
+        };
+    }
+}
+
+
+public final class Contours {
     private final static double CONTOUR_STEP = 20;
     private final List<Attributed<PolyLine>> contourLines = new ArrayList<>();
-    private final List<Double> levels = new ArrayList<>();;
-    private final double[][] elevations;
+    private final List<Double> levels = new ArrayList<>();
+    private final ElevationView elevations;
 
     public Contours(Projection proj, DigitalElevationModel dem, Point projectedBottomLeft, Point projectedTopRight,
                     int width, int height) {
         requireNonNull(proj);
         requireNonNull(dem);
 
+        for (double i = 0; i < 5000; i += CONTOUR_STEP) {
+            levels.add(i);
+        }
+
         Function<Point, Point> coordChange = Point.alignedCoordinateChange(
                 new Point(0, height), projectedBottomLeft,
                 new Point(width, 0), projectedTopRight
         );
 
-        double[][] data = new double[height][width];
-        for (int j = 0; j < height; j++) {
-            for (int i = 0; i < width; i++) {
-                PointGeo p = proj.inverse(coordChange.apply(new Point(i, j)));
-                data[j][i] = ((HGTDigitalElevationModel) dem).bufferAt(p);
-            }
-        }
-
-        this.elevations = prepareData(data);
+        this.elevations = new ElevationView(proj, dem, width, height, coordChange);
 
         // Shift coordinates by (-1,-1) for padding
         Function<Point, Point> ref = alignedCoordinateChange(
-                new Point(1, this.elevations.length + 1), projectedBottomLeft,
-                new Point(this.elevations[0].length + 1, 1), projectedTopRight
+                new Point(1, elevations.height() + 1), projectedBottomLeft,
+                new Point(elevations.width() + 1, 1), projectedTopRight
         );
 
         IsoCell[][] levelContours;
@@ -56,49 +91,16 @@ public class Contours {
         }
     }
 
-    private double[][] prepareData(double[][] data) {
-        int rows = data.length;
-        int cols = data[0].length;
-        double[][] padded = new double[rows + 2][cols + 2];
-
-        double minLevel = Float.MAX_VALUE;
-        double maxLevel = Float.MIN_VALUE;
-        double currentElevation;
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < cols; j++) {
-                currentElevation = data[i][j];
-                padded[i + 1][j + 1] = currentElevation;
-                minLevel = Math.min(currentElevation, minLevel);
-                maxLevel = Math.max(currentElevation, maxLevel);
-            }
-        }
-        minLevel--;
-
-        for (int i = 0; i < cols + 2; i++) {
-            padded[0][i] = minLevel;
-            padded[rows + 1][i] = minLevel;
-        }
-        for (int i = 0; i < rows + 2; i++) {
-            padded[i][0] = minLevel;
-            padded[i][cols + 1] = minLevel;
-        }
-
-        for (double level = CONTOUR_STEP * Math.ceilDiv((int) minLevel+1, (int) CONTOUR_STEP);
-             level < maxLevel; level += CONTOUR_STEP)
-            this.levels.add(level);
-
-        return padded;
-    }
 
     private IsoCell[][] constructIsoMap(double level) {
-        double[] elevations;
-        int width = this.elevations[0].length;
-        int height = this.elevations.length;
-        IsoCell[][] contours = new IsoCell[height - 1][width - 1];
-        for (int j = 0; j < height - 1; j++) {
-            for (int i = 0; i < width - 1; i++) {
-                elevations = getPaddedElevation(i, j);
-                contours[j][i] = new IsoCell(level, elevations, true);
+        double[] elevationsAt;
+        int width = elevations.width();
+        int height = elevations.height();
+        IsoCell[][] contours = new IsoCell[height + 1][width + 1];
+        for (int j = -1; j < height; j++) {
+            for (int i = -1; i < width; i++) {
+                elevationsAt = elevations.getPaddedElevation(i, j);
+                contours[j + 1][i + 1] = new IsoCell(level, elevationsAt, true);
             }
         }
         return contours;
@@ -144,6 +146,8 @@ public class Contours {
         }
         start.clearIso();
 
+        System.out.println(level);
+
         IsoCell curCell;
         while ((curCell = levelContours[j][i]) != start) {
             nextSide = curCell.secondSide(nextSide);
@@ -159,15 +163,6 @@ public class Contours {
         }
 
         return new Attributed<>(polyLineBuilder.buildClosed(), contourAttributes);
-    }
-
-    private double[] getPaddedElevation(int i, int j) {
-        return new double[]{
-                this.elevations[j][i],
-                this.elevations[j][i+1],
-                this.elevations[j+1][i],
-                this.elevations[j+1][i+1],
-        };
     }
 
     public List<Attributed<PolyLine>> getContourLines() {

@@ -146,8 +146,6 @@ public final class Contours {
         }
         start.clearIso();
 
-        System.out.println(level);
-
         IsoCell curCell;
         while ((curCell = levelContours[j][i]) != start) {
             nextSide = curCell.secondSide(nextSide);

@@ -18,21 +18,19 @@ public final class SwissPainter {
         Color darkBlue = rgb(0, 0.49, 0.77);
         Color brown = rgb(0.68, 0.43, 0.16);
         Color lightBrown = rgb(0.84, 0.85, 0.62);
-        Color orange = rgb(1, 0.75, 0.2);
+        Color orange = rgb(0.85, 0.45, 0.);
         Color lightOrange = rgb(1, 0.95, 0.4);
-//        Color orange = rgb(0.97, 0.59, 0.12);
         Color lightRed = rgb(0.95, 0.7, 0.6);
-//        Color lightRed = rgb(0.96, 0.60, 0.65);
         Color yellow = rgb(0.97, 0.91, 0);
         Color paleYellow = rgb(0.93, 0.94, 0.83);
         Color rose = rgb(0.76, 0.16, 0.46);
         Color lightRose = rgb(0.93, 0.66, 0.78);
         Color lightGreen = rgb(0.63, 0.81, 0.51);
         Color paleGreen = rgb(0.78, 0.84, 0.67);
-        Color lightBlue = rgb(0.84, 0.91, 0.98);
+        Color lightBlue = rgb(0.84, 1, 1);
         Color white = Color.WHITE;
         Color lightYellow = rgb(1, 0.93, 0);
-        Color forestGreen = rgb(0.76, 0.88, 0.73);
+        Color forestGreen = rgb(0.73, 0.92, 0.69);
 
         Color darkGray = gray(0.2);
         Color darkGreen = rgb(0.75, 0.85, 0.7);
@@ -62,7 +60,7 @@ public final class SwissPainter {
                 .above(polygon(lightGreen).when(tagged("leisure", "pitch")))
                 .above(line(1, black).when(tagged("man_made", "pier")))
                 .above(line(0.5f, brown).when(tagged("major_contour")))
-                .above(line(0.5f, orange).when(tagged("minor_contour")))
+                .above(line(0.25f, orange).when(tagged("minor_contour")))
                 .layered();
 
         Painter bgPainter =

@@ -20,6 +20,7 @@ import ch.epfl.imhof.projection.Projection;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.ArrayList;
 
 import static ch.epfl.imhof.paintaing.Color.convert;
 import static ch.epfl.imhof.paintaing.Color.mult;
@@ -30,11 +31,11 @@ public final class Main {
 
     public static void main(String[] args) throws Exception {
         PointGeo bottomLeft = new PointGeo(
-                Math.toRadians(Double.parseDouble(args[2])),
-                Math.toRadians(Double.parseDouble(args[3])));
+                Math.toRadians(Double.parseDouble(args[3])),
+                Math.toRadians(Double.parseDouble(args[2])));
         PointGeo topRight = new PointGeo(
-                Math.toRadians(Double.parseDouble(args[4])),
-                Math.toRadians(Double.parseDouble(args[5])));
+                Math.toRadians(Double.parseDouble(args[5])),
+                Math.toRadians(Double.parseDouble(args[4])));
 
 
         int dpi = Integer.parseInt(args[6]);
@@ -81,7 +82,9 @@ public final class Main {
         Grid grid = new Grid(projectedBottomLeft, projectedTopRight);
         map.addGrid(grid);
 
-        Contours contours = new Contours(projection, dem, projectedBottomLeft, projectedTopRight, width * 2, height * 2);
+        Contours contours = new Contours(projection, dem, projectedBottomLeft, projectedTopRight,
+                width / (5 * dpi / 100),
+                height / (5 * dpi / 100));
         map.addContours(contours);
 
         elapsed = System.nanoTime() - startTime;

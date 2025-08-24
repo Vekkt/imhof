@@ -18,7 +18,7 @@ import static ch.epfl.imhof.geometry.Point.alignedCoordinateChange;
 import static java.util.Objects.requireNonNull;
 
 public class Contours {
-    private final static double CONTOUR_STEP = 50;
+    private final static double CONTOUR_STEP = 20;
     private final List<Attributed<PolyLine>> contourLines = new ArrayList<>();
     private final List<Double> levels = new ArrayList<>();;
     private final double[][] elevations;
@@ -123,7 +123,7 @@ public class Contours {
     
     private Attributed<PolyLine> buildLevelSubContour(IsoCell[][] levelContours, int i, int j, Function<Point, Point> ref, double level) {
         Attributes contourAttributes = new Attributes(
-                Collections.singletonMap((((int) level) % 200 == 0) ? "major_contour": "minor_contour", "")
+                Collections.singletonMap((((int) level) % 100 == 0) ? "major_contour": "minor_contour", "")
         );
         PolyLine.Builder polyLineBuilder = new PolyLine.Builder();
 

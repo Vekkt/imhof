@@ -70,9 +70,8 @@ public final class HGTDigitalElevationModel implements DigitalElevationModel {
     private FileCoords getGetFileCoords(PointGeo p) {
         double pointLatitude = Math.toDegrees(p.latitude());
         double pointLongitude = Math.toDegrees(p.longitude());
-
-        Preconditions.inCloseBounds(pointLatitude - 1, latitude, pointLatitude);
-        Preconditions.inCloseBounds(pointLongitude - 1, longitude, pointLongitude);
+        Preconditions.inCloseBounds(latitude, pointLatitude, latitude + 1);
+        Preconditions.inCloseBounds(longitude, pointLongitude, longitude + 1);
 
         double preciseI = (pointLongitude - longitude) * sideLength;
         double preciseJ = (pointLatitude - latitude) * sideLength;

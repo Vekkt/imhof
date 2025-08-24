@@ -38,7 +38,7 @@ final class ElevationView {
     public int height() { return height; }
 
     private double safeBufferAt(int i, int j) {
-        if (i >= width || j >= height || i < 0 || j < 0) {
+        if (i > width || j > height || i < 0 || j < 0) {
             return Double.MIN_VALUE;
         }
         PointGeo p = projection.inverse(coordinateChange.apply(new Point(i, j)));
@@ -96,9 +96,9 @@ public final class Contours {
         double[] elevationsAt;
         int width = elevations.width();
         int height = elevations.height();
-        IsoCell[][] contours = new IsoCell[height + 1][width + 1];
-        for (int j = -1; j < height; j++) {
-            for (int i = -1; i < width; i++) {
+        IsoCell[][] contours = new IsoCell[height + 2][width + 2];
+        for (int j = -1; j < height + 1; j++) {
+            for (int i = -1; i < width + 1; i++) {
                 elevationsAt = elevations.getPaddedElevation(i, j);
                 contours[j + 1][i + 1] = new IsoCell(level, elevationsAt, true);
             }

@@ -2,9 +2,8 @@ package ch.epfl.imhof.contours;
 
 import ch.epfl.imhof.Attributed;
 import ch.epfl.imhof.Attributes;
-import ch.epfl.imhof.PointGeo;
 import ch.epfl.imhof.dem.DigitalElevationModel;
-import ch.epfl.imhof.dem.HGTDigitalElevationModel;
+import ch.epfl.imhof.dem.ElevationView;
 import ch.epfl.imhof.geometry.PolyLine;
 import ch.epfl.imhof.geometry.Point;
 import ch.epfl.imhof.projection.Projection;
@@ -18,46 +17,9 @@ import static ch.epfl.imhof.geometry.Point.alignedCoordinateChange;
 import static java.util.Objects.requireNonNull;
 
 
-final class ElevationView {
-    private final Projection projection;
-    private final DigitalElevationModel dem;
-    Function<Point, Point> coordinateChange;
-    private final int width;
-    private final int height;
-
-    ElevationView(Projection proj, DigitalElevationModel dem, int width, int height, Function<Point, Point> ref) {
-        this.projection = requireNonNull(proj);
-        this.dem = requireNonNull(dem);
-        this.coordinateChange = requireNonNull(ref);
-        this.width = width;
-        this.height = height;
-
-    }
-
-    public int width() { return width; }
-    public int height() { return height; }
-
-    private double safeBufferAt(int i, int j) {
-        if (i > width || j > height || i < 0 || j < 0) {
-            return Double.MIN_VALUE;
-        }
-        PointGeo p = projection.inverse(coordinateChange.apply(new Point(i, j)));
-        return dem.bufferAt(p);
-    }
-
-    public double[] getPaddedElevation(int i, int j) {
-        return new double[]{
-                safeBufferAt(i, j),
-                safeBufferAt(i + 1, j),
-                safeBufferAt(i, j + 1),
-                safeBufferAt(i + 1, j + 1),
-        };
-    }
-}
-
-
 public final class Contours {
     private final static double CONTOUR_STEP = 20;
+    private final static double MAJOR_CONTOUR_STEP = 100;
     private final List<Attributed<PolyLine>> contourLines = new ArrayList<>();
     private final List<Double> levels = new ArrayList<>();
     private final ElevationView elevations;
@@ -67,16 +29,17 @@ public final class Contours {
         requireNonNull(proj);
         requireNonNull(dem);
 
-        for (double i = 0; i < 5000; i += CONTOUR_STEP) {
-            levels.add(i);
-        }
-
         Function<Point, Point> coordChange = Point.alignedCoordinateChange(
                 new Point(0, height), projectedBottomLeft,
                 new Point(width, 0), projectedTopRight
         );
 
         this.elevations = new ElevationView(proj, dem, width, height, coordChange);
+
+        double zeroElevation = Math.round((float) elevations.minElevation() / CONTOUR_STEP) * CONTOUR_STEP;
+        for (double i = zeroElevation; i < elevations.maxElevation(); i += CONTOUR_STEP) {
+            levels.add(i);
+        }
 
         // Shift coordinates by (-1,-1) for padding
         Function<Point, Point> ref = alignedCoordinateChange(
@@ -125,7 +88,7 @@ public final class Contours {
     
     private Attributed<PolyLine> buildLevelSubContour(IsoCell[][] levelContours, int i, int j, Function<Point, Point> ref, double level) {
         Attributes contourAttributes = new Attributes(
-                Collections.singletonMap((((int) level) % 100 == 0) ? "major_contour": "minor_contour", "")
+                Collections.singletonMap((((int) level) % MAJOR_CONTOUR_STEP == 0) ? "major_contour": "minor_contour", "")
         );
         PolyLine.Builder polyLineBuilder = new PolyLine.Builder();
 

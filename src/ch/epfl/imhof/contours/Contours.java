@@ -21,7 +21,6 @@ public final class Contours {
     private final static double CONTOUR_STEP = 20;
     private final static double MAJOR_CONTOUR_STEP = 100;
     private final List<Attributed<PolyLine>> contourLines = new ArrayList<>();
-    private final List<Double> levels = new ArrayList<>();
     private final ElevationView elevations;
 
     public Contours(Projection proj, DigitalElevationModel dem, Point projectedBottomLeft, Point projectedTopRight,
@@ -36,10 +35,6 @@ public final class Contours {
 
         this.elevations = new ElevationView(proj, dem, width, height, coordChange);
 
-        double zeroElevation = Math.round((float) elevations.minElevation() / CONTOUR_STEP) * CONTOUR_STEP;
-        for (double i = zeroElevation; i < elevations.maxElevation(); i += CONTOUR_STEP) {
-            levels.add(i);
-        }
 
         // Shift coordinates by (-1,-1) for padding
         Function<Point, Point> ref = alignedCoordinateChange(
@@ -48,7 +43,8 @@ public final class Contours {
         );
 
         IsoCell[][] levelContours;
-        for (double level: levels) {
+        double zeroElevation = Math.round((float) elevations.minElevation() / CONTOUR_STEP) * CONTOUR_STEP;
+        for (double level = zeroElevation; level < elevations.maxElevation(); level += CONTOUR_STEP) {
             levelContours = constructIsoMap(level);
             contourLines.addAll(buildLevelPolyLines(levelContours, ref, level));
         }

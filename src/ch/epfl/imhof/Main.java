@@ -80,7 +80,7 @@ public final class Main {
         System.out.print("Creating object map... ");
         Map map = osmToGeoTransformer.transform(osmMap);
         elapsed = System.nanoTime() - startTime;
-        System.out.printf("Map finished in %.2f s\n", elapsed * 1e-9);
+        System.out.printf("Object map done in %.2f s\n", elapsed * 1e-9);
 
         Grid grid = new Grid(projectedBottomLeft, projectedTopRight);
         map.addGrid(grid);
@@ -93,9 +93,6 @@ public final class Main {
         map.addContours(contours);
         elapsed = System.nanoTime() - startTime;
         System.out.printf("Contours finished in %.2f s\n", elapsed * 1e-9);
-
-        elapsed = System.nanoTime() - startTime;
-        System.out.printf("Object map done in %.2f s\n", elapsed * 1e-9);
 
         Java2DCanvas canvas = new Java2DCanvas(
                 projectedBottomLeft, projectedTopRight,

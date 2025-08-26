@@ -18,6 +18,7 @@ import ch.epfl.imhof.projection.EquirectangularProjection;
 import ch.epfl.imhof.projection.Projection;
 
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
@@ -48,8 +49,8 @@ public final class Main {
 
         Projection projection;
 
-        if (args.length > 8) {
-            projection = switch (args[8]) {
+        if (args.length > 9) {
+            projection = switch (args[9]) {
                 case "CH1903" -> new CH1903Projection();
                 case "Equirectangular" -> new EquirectangularProjection();
                 default -> throw new IllegalArgumentException("Nom de projection invalide.");
@@ -82,10 +83,14 @@ public final class Main {
         Grid grid = new Grid(projectedBottomLeft, projectedTopRight);
         map.addGrid(grid);
 
+        startTime = System.nanoTime();
+        System.out.print("Generating contours... ");
         Contours contours = new Contours(projection, dem, projectedBottomLeft, projectedTopRight,
                 width / (5 * dpi / 100),
                 height / (5 * dpi / 100));
         map.addContours(contours);
+        elapsed = System.nanoTime() - startTime;
+        System.out.printf("Contours finished in %.2f s\n", elapsed * 1e-9);
 
         elapsed = System.nanoTime() - startTime;
         System.out.printf("Object map done in %.2f s\n", elapsed * 1e-9);
@@ -111,7 +116,7 @@ public final class Main {
         dem.close();
 
         BufferedImage finalImage = combine(relief, canvas.image());
-        finalImage = Border.drawBorder(finalImage);
+        finalImage = Border.drawBorder(finalImage, args[8]);
 
         ImageIO.write(finalImage, "png", new File(args[7]));
     }

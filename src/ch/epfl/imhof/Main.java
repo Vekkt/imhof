@@ -79,6 +79,8 @@ public final class Main {
         startTime = System.nanoTime();
         System.out.print("Creating object map... ");
         Map map = osmToGeoTransformer.transform(osmMap);
+        elapsed = System.nanoTime() - startTime;
+        System.out.printf("Map finished in %.2f s\n", elapsed * 1e-9);
 
         Grid grid = new Grid(projectedBottomLeft, projectedTopRight);
         map.addGrid(grid);

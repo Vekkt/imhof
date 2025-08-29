@@ -37,6 +37,6 @@ public abstract class PolyLine {
     }
 
     public Point firstPoint() {
-        return points.get(0);
+        return points.getFirst();
     }
 }

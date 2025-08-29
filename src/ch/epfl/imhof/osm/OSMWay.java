@@ -32,7 +32,7 @@ public final class OSMWay extends OSMEntity {
     }
 
     public OSMNode firstNode() {
-        return this.nodes.get(0);
+        return this.nodes.getFirst();
     }
 
     public OSMNode lastNode() {
@@ -40,7 +40,7 @@ public final class OSMWay extends OSMEntity {
     }
 
     public boolean isClosed() {
-        return this.nodes.get(0).equals(this.nodes.get(this.nodesCount() - 1));
+        return this.nodes.getFirst().equals(this.nodes.get(this.nodesCount() - 1));
     }
 
     public static final class Builder extends OSMEntity.Builder {

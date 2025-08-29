@@ -7,8 +7,8 @@ public final class OSMMap {
     private final List<OSMRelation> relations;
 
     public OSMMap(Collection<OSMWay> ways, Collection<OSMRelation> relations) {
-        this.ways = Collections.unmodifiableList(new ArrayList<>(ways));
-        this.relations = Collections.unmodifiableList(new ArrayList<>(relations));
+        this.ways = List.copyOf(ways);
+        this.relations = List.copyOf(relations);
     }
 
     public List<OSMWay> ways() {

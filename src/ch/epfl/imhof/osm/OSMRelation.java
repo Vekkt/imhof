@@ -11,11 +11,11 @@ public final class OSMRelation extends OSMEntity {
 
     public OSMRelation(long id, List<Member> members, Attributes attributes) {
         super(id, attributes);
-        this.members = Collections.unmodifiableList(new ArrayList<>(members));
+        this.members = List.copyOf(members);
     }
 
     public List<Member> members() {
-        return Collections.unmodifiableList(new ArrayList<>(this.members));
+        return List.copyOf(this.members);
     }
 
     public static final class Member {

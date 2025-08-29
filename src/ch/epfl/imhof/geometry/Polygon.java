@@ -24,6 +24,6 @@ public final class Polygon {
     }
 
     public List<ClosedPolyLine> holes() {
-        return Collections.unmodifiableList(new ArrayList<>(this.holes));
+        return List.copyOf(this.holes);
     }
 }

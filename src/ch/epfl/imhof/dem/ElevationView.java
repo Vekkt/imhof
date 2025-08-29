@@ -11,7 +11,7 @@ import static java.util.Objects.requireNonNull;
 public final class ElevationView {
     private final Projection projection;
     private final DigitalElevationModel dem;
-    Function<Point, Point> coordinateChange;
+    final Function<Point, Point> coordinateChange;
     private final int width;
     private final int height;
 

@@ -6,8 +6,9 @@ import ch.epfl.imhof.geometry.Point;
 public class IsoCell {
     public enum Side {
         LEFT, RIGHT, TOP, BOTTOM, NONE
-    };
-    boolean flipped;
+    }
+
+    final boolean flipped;
     int cellBits;
     double left, right, top, bottom;
 

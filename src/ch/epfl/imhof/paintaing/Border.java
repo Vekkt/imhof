@@ -6,8 +6,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
-import static java.lang.Math.round;
-
 public final class Border {
     private static final Color OUTER_BORDER = Color.WHITE;
     private static final Color INNER_BORDER = Color.BLACK;

@@ -18,10 +18,8 @@ import ch.epfl.imhof.projection.EquirectangularProjection;
 import ch.epfl.imhof.projection.Projection;
 
 import javax.imageio.ImageIO;
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.util.ArrayList;
 
 import static ch.epfl.imhof.paintaing.Color.convert;
 import static ch.epfl.imhof.paintaing.Color.mult;

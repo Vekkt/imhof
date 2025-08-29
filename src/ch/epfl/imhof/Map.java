@@ -3,7 +3,6 @@ package ch.epfl.imhof;
 import ch.epfl.imhof.contours.Contours;
 import ch.epfl.imhof.geometry.PolyLine;
 import ch.epfl.imhof.geometry.Polygon;
-import ch.epfl.imhof.projection.Projection;
 
 import java.util.ArrayList;
 import java.util.Collections;

@@ -38,10 +38,6 @@ public final class Color {
         double g = ((values >> 8) & 0xFF) / 255d;
         double r = ((values >> 16) & 0xFF) / 255d;
 
-        Preconditions.checkArgument(0 <= r && r <= 1);
-        Preconditions.checkArgument(0 <= g && g <= 1);
-        Preconditions.checkArgument(0 <= b && b <= 1);
-
         return new Color(r, g, b);
     }
 

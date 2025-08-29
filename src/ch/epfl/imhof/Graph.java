@@ -10,7 +10,7 @@ public final class Graph<N> {
         Map<N, Set<N>> tmp = new HashMap<>();
 
         for (Map.Entry<N, Set<N>> mapEntry : neighbors.entrySet())
-            tmp.put(mapEntry.getKey(), Collections.unmodifiableSet(new HashSet<>(mapEntry.getValue())));
+            tmp.put(mapEntry.getKey(), Set.copyOf(mapEntry.getValue()));
 
         this.neighbors = Collections.unmodifiableMap(tmp);
     }
@@ -48,7 +48,7 @@ public final class Graph<N> {
         public Graph<N> build() {
             Map<N, Set<N>> safeMap = new HashMap<>();
             for (N key: neighbors.keySet())
-                safeMap.put(key, Collections.unmodifiableSet(new HashSet<>(neighbors.get(key))));
+                safeMap.put(key, Set.copyOf(neighbors.get(key)));
             return new Graph<>(Collections.unmodifiableMap(safeMap));
         }
     }

@@ -3,7 +3,6 @@ package ch.epfl.imhof.osm;
 import ch.epfl.imhof.*;
 import ch.epfl.imhof.Map;
 import ch.epfl.imhof.geometry.ClosedPolyLine;
-import ch.epfl.imhof.geometry.OpenPolyLine;
 import ch.epfl.imhof.geometry.PolyLine;
 import ch.epfl.imhof.geometry.Polygon;
 import ch.epfl.imhof.projection.Projection;

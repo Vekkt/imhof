@@ -1,12 +1,12 @@
-package ch.epfl.imhof.paintaing;
+package ch.epfl.imhof.painting;
 
-import static ch.epfl.imhof.paintaing.Color.gray;
-import static ch.epfl.imhof.paintaing.Color.rgb;
-import static ch.epfl.imhof.paintaing.Filters.tagged;
-import static ch.epfl.imhof.paintaing.Painter.line;
-import static ch.epfl.imhof.paintaing.Painter.outline;
-import static ch.epfl.imhof.paintaing.Painter.polygon;
-import static ch.epfl.imhof.paintaing.RoadPainterGenerator.RoadSpec;
+import static ch.epfl.imhof.painting.Color.gray;
+import static ch.epfl.imhof.painting.Color.rgb;
+import static ch.epfl.imhof.painting.Filters.tagged;
+import static ch.epfl.imhof.painting.Painter.line;
+import static ch.epfl.imhof.painting.Painter.outline;
+import static ch.epfl.imhof.painting.Painter.polygon;
+import static ch.epfl.imhof.painting.RoadPainterGenerator.RoadSpec;
 
 public final class SwissPainter {
     private static final Painter PAINTER;

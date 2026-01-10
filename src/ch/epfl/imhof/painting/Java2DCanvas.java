@@ -1,4 +1,4 @@
-package ch.epfl.imhof.paintaing;
+package ch.epfl.imhof.painting;
 
 import ch.epfl.imhof.geometry.ClosedPolyLine;
 import ch.epfl.imhof.geometry.Point;
@@ -11,7 +11,7 @@ import java.awt.geom.Path2D;
 import java.awt.image.BufferedImage;
 import java.util.function.Function;
 
-import static ch.epfl.imhof.paintaing.Color.convert;
+import static ch.epfl.imhof.painting.Color.convert;
 import static java.awt.RenderingHints.KEY_ANTIALIASING;
 import static java.awt.RenderingHints.VALUE_ANTIALIAS_ON;
 

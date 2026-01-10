@@ -1,4 +1,4 @@
-package ch.epfl.imhof.paintaing;
+package ch.epfl.imhof.painting;
 
 import ch.epfl.imhof.Preconditions;
 

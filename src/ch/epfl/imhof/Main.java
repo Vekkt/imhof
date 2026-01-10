@@ -9,10 +9,10 @@ import ch.epfl.imhof.geometry.Point;
 import ch.epfl.imhof.osm.OSMMap;
 import ch.epfl.imhof.osm.OSMMapReader;
 import ch.epfl.imhof.osm.OSMToGeoTransformer;
-import ch.epfl.imhof.paintaing.Color;
-import ch.epfl.imhof.paintaing.Border;
-import ch.epfl.imhof.paintaing.Java2DCanvas;
-import ch.epfl.imhof.paintaing.SwissPainter;
+import ch.epfl.imhof.painting.Color;
+import ch.epfl.imhof.painting.Border;
+import ch.epfl.imhof.painting.Java2DCanvas;
+import ch.epfl.imhof.painting.SwissPainter;
 import ch.epfl.imhof.projection.CH1903Projection;
 import ch.epfl.imhof.projection.EquirectangularProjection;
 import ch.epfl.imhof.projection.Projection;
@@ -21,8 +21,8 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 
-import static ch.epfl.imhof.paintaing.Color.convert;
-import static ch.epfl.imhof.paintaing.Color.mult;
+import static ch.epfl.imhof.painting.Color.convert;
+import static ch.epfl.imhof.painting.Color.mult;
 
 public final class Main {
     private final static Vector3 LIGHT_SOURCE = new Vector3(-1, 1, 1);

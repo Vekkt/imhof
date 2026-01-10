@@ -1,4 +1,4 @@
-package ch.epfl.imhof.paintaing;
+package ch.epfl.imhof.painting;
 
 import java.awt.*;
 import java.awt.Color;

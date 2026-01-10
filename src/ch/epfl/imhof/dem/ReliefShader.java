@@ -10,6 +10,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.ConvolveOp;
 import java.awt.image.Kernel;
 import java.util.function.Function;
+import java.util.stream.IntStream;
 
 import static ch.epfl.imhof.geometry.Point.alignedCoordinateChange;
 import static java.awt.image.BufferedImage.TYPE_INT_RGB;
@@ -50,18 +51,21 @@ public final class ReliefShader {
 
     private BufferedImage getRawRelief(int width, int height, Function<Point, Point> ref) {
         BufferedImage rawShade = new BufferedImage(width, height, TYPE_INT_RGB);
+        int[] pixels = new int[width * height];
 
-        for (int i = 0; i < width; i++) {
-            for (int j = 0; j < height; j++) {
+        IntStream.range(0, height).parallel().forEach(j -> {
+            for (int i = 0; i < width; i++) {
                 PointGeo p = proj.inverse(ref.apply(new Point(i, j)));
                 Vector3 slope = dem.normalAt(p);
 
                 float ctheta = (float) light.scalarProduct(slope);
                 float c = (6f + 3f * ctheta) / 9f;
 
-                rawShade.setRGB(i, j, new Color(c, c, c).getRGB());
+                pixels[j * width + i] = new Color(c, c, c).getRGB();
             }
-        }
+        });
+
+        rawShade.setRGB(0, 0, width, height, pixels, 0, width);
         return rawShade;
     }
 

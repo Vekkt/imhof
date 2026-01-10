@@ -42,12 +42,18 @@ public final class Contours {
                 new Point(elevations.width() + 1, 1), projectedTopRight
         );
 
-        IsoCell[][] levelContours;
+        List<Double> levels = new ArrayList<>();
         double zeroElevation = Math.round((float) elevations.minElevation() / CONTOUR_STEP) * CONTOUR_STEP;
         for (double level = zeroElevation; level < elevations.maxElevation(); level += CONTOUR_STEP) {
-            levelContours = constructIsoMap(level);
-            contourLines.addAll(buildLevelPolyLines(levelContours, ref, level));
+            levels.add(level);
         }
+
+        contourLines.addAll(levels.parallelStream()
+                .flatMap(level -> {
+                    IsoCell[][] levelContours = constructIsoMap(level);
+                    return buildLevelPolyLines(levelContours, ref, level).stream();
+                })
+                .toList());
     }
 
 

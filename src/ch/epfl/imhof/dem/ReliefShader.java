@@ -31,6 +31,10 @@ public final class ReliefShader {
     public BufferedImage shadedRelief(Point bl, Point tr, int width, int height, float r) {
         Function<Point, Point> newRef = alignedCoordinateChange(new Point(0, height), bl, new Point(width, 0), tr);
 
+        if (r == 0) {
+            return getRawRelief(width, height, newRef);
+        }
+
         float[] kernelData = shadingKernel(r);
         Kernel hkernel = new Kernel(kernelData.length, 1, kernelData);
         Kernel vkernel = new Kernel(1, kernelData.length, kernelData);

@@ -87,10 +87,9 @@ public final class Main {
 
         startTime = System.nanoTime();
         System.out.print("Generating contours... ");
-        int contourGridPixelStep = Math.max(1, 5 * dpi / 100);
         Contours contours = new Contours(projection, dem, projectedBottomLeft, projectedTopRight,
-                Math.max(1, width / contourGridPixelStep),
-                Math.max(1, height / contourGridPixelStep));
+                width / (5 * dpi / 100),
+                height / (5 * dpi / 100));
         map = map.withAdditionalPolyLines(contours.contourLines());
         elapsed = System.nanoTime() - startTime;
         System.out.printf("Contours finished in %.2f s\n", elapsed * 1e-9);

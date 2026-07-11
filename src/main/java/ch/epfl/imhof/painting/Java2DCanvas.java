@@ -1,8 +1,6 @@
 package ch.epfl.imhof.painting;
 
-import ch.epfl.imhof.geometry.BezierPolyLine;
 import ch.epfl.imhof.geometry.ClosedPolyLine;
-import ch.epfl.imhof.geometry.CubicBezierSegment;
 import ch.epfl.imhof.geometry.Point;
 import ch.epfl.imhof.geometry.PolyLine;
 import ch.epfl.imhof.geometry.Polygon;
@@ -57,10 +55,6 @@ public final class Java2DCanvas implements Canvas {
     }
 
     private Path2D createPathFromPolyLine(PolyLine p) {
-        if (p instanceof BezierPolyLine bezierPolyLine) {
-            return createPathFromBezierPolyLine(bezierPolyLine);
-        }
-
         Path2D path = new Path2D.Double();
         Point firstPoint = coordChange.apply(p.firstPoint());
         path.moveTo(firstPoint.x(), firstPoint.y());
@@ -69,24 +63,6 @@ public final class Java2DCanvas implements Canvas {
             Point nextPoint = coordChange.apply(pt);
             path.lineTo(nextPoint.x(), nextPoint.y());
         }
-        return path;
-    }
-
-    private Path2D createPathFromBezierPolyLine(BezierPolyLine p) {
-        Path2D path = new Path2D.Double();
-        Point firstPoint = coordChange.apply(p.firstPoint());
-        path.moveTo(firstPoint.x(), firstPoint.y());
-
-        for (CubicBezierSegment segment : p.segments()) {
-            Point control1 = coordChange.apply(segment.control1());
-            Point control2 = coordChange.apply(segment.control2());
-            Point end = coordChange.apply(segment.end());
-            path.curveTo(
-                    control1.x(), control1.y(),
-                    control2.x(), control2.y(),
-                    end.x(), end.y());
-        }
-
         return path;
     }
 

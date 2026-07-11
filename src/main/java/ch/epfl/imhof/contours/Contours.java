@@ -92,16 +92,16 @@ public final class Contours {
         Attributes contourAttributes = new Attributes(
                 Collections.singletonMap((((int) level) % MAJOR_CONTOUR_STEP == 0) ? "major_contour": "minor_contour", "")
         );
-        List<Point> contourPoints = new ArrayList<>();
+        PolyLine.Builder polyLineBuilder = new PolyLine.Builder();
 
         IsoCell.Side prevSide = IsoCell.Side.NONE;
         IsoCell.Side nextSide;
         IsoCell start = levelContours[j][i];
 
         nextSide = start.firstSide(prevSide);
-        contourPoints.add(ref.apply(start.fromPoint(nextSide, new Point(i, j))));
+        polyLineBuilder.addPoint(ref.apply(start.fromPoint(nextSide, new Point(i, j))));
         nextSide = start.secondSide(nextSide);
-        contourPoints.add(ref.apply(start.fromPoint(nextSide, new Point(i, j))));
+        polyLineBuilder.addPoint(ref.apply(start.fromPoint(nextSide, new Point(i, j))));
 
         switch (nextSide) {
             case BOTTOM -> j += 1;
@@ -114,7 +114,7 @@ public final class Contours {
         IsoCell curCell;
         while ((curCell = levelContours[j][i]) != start) {
             nextSide = curCell.secondSide(nextSide);
-            contourPoints.add(ref.apply(curCell.fromPoint(nextSide, new Point(i, j))));
+            polyLineBuilder.addPoint(ref.apply(curCell.fromPoint(nextSide, new Point(i, j))));
 
             switch (nextSide) {
                 case BOTTOM -> j += 1;
@@ -125,7 +125,7 @@ public final class Contours {
             curCell.clearIso();
         }
 
-        return new Attributed<>(ContourBezierSmoother.smoothClosed(contourPoints), contourAttributes);
+        return new Attributed<>(polyLineBuilder.buildClosed(), contourAttributes);
     }
 
     public List<Attributed<PolyLine>> contourLines() {

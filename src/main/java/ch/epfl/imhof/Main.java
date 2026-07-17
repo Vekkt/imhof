@@ -49,8 +49,8 @@ public final class Main {
 
         Projection projection;
 
-        if (args.length > 9) {
-            projection = switch (args[9]) {
+        if (args.length > 8) {
+            projection = switch (args[8]) {
                 case "CH1903" -> new CH1903Projection();
                 case "Equirectangular" -> new EquirectangularProjection();
                 default -> throw new IllegalArgumentException("Nom de projection invalide.");
@@ -76,6 +76,7 @@ public final class Main {
         OSMMap osmMap = OSMMapReader.readOSMFile(args[0], true);
         long elapsed = System.nanoTime() - startTime;
         System.out.printf("Finish reading OSM file in %.2f s\n", elapsed * 1e-9);
+
         startTime = System.nanoTime();
         System.out.print("Creating object map... ");
         Map map = osmToGeoTransformer.transform(osmMap);
@@ -92,7 +93,9 @@ public final class Main {
                 height / (5 * dpi / 100));
         map = map.withAdditionalPolyLines(contours.contourLines());
         elapsed = System.nanoTime() - startTime;
-        System.out.printf("Contours finished in %.2f s\n", elapsed * 1e-9);
+        System.out.printf("Contours finished in %.2f s (%d processed line fragments)\n",
+                elapsed * 1e-9,
+                contours.contourLines().size());
 
         Java2DCanvas canvas = new Java2DCanvas(
                 projectedBottomLeft, projectedTopRight,
@@ -115,7 +118,7 @@ public final class Main {
         dem.close();
 
         BufferedImage finalImage = combine(relief, canvas.image());
-        finalImage = Border.drawBorder(finalImage, args[8]);
+        finalImage = Border.drawBorder(finalImage);
 
         ImageIO.write(finalImage, "png", new File(args[7]));
     }

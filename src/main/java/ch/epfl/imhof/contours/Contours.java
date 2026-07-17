@@ -20,6 +20,8 @@ import static java.util.Objects.requireNonNull;
 public final class Contours {
     private final static double CONTOUR_STEP = 20;
     private final static double MAJOR_CONTOUR_STEP = 100;
+    private final static double RDP_TOLERANCE = 25d;
+    private final static int CHAIKEN_ITERATIONS = 3;
     private final List<Attributed<PolyLine>> contourLines = new ArrayList<>();
     private final ElevationView elevations;
 
@@ -48,12 +50,14 @@ public final class Contours {
             levels.add(level);
         }
 
-        contourLines.addAll(levels.parallelStream()
+        List<Attributed<PolyLine>> rawContourLines = levels.parallelStream()
                 .flatMap(level -> {
                     IsoCell[][] levelContours = constructIsoMap(level);
                     return buildLevelPolyLines(levelContours, ref, level).stream();
                 })
-                .toList());
+                .toList();
+
+        contourLines.addAll(process(rawContourLines, projectedBottomLeft, projectedTopRight));
     }
 
 
@@ -126,6 +130,34 @@ public final class Contours {
         }
 
         return new Attributed<>(polyLineBuilder.buildClosed(), contourAttributes);
+    }
+
+    private static List<Attributed<PolyLine>> process(List<Attributed<PolyLine>> rawContourLines,
+                                                      Point projectedBottomLeft,
+                                                      Point projectedTopRight) {
+        List<Attributed<PolyLine>> processedContourLines = new ArrayList<>();
+
+        for (Attributed<PolyLine> contourLine : rawContourLines) {
+            for (PolyLine visibleLine : ContourClipper.clipToRectangle(
+                    contourLine.value(),
+                    projectedBottomLeft,
+                    projectedTopRight)) {
+                List<Point> keptPoints = RamerDouglasPeucker.simplify(visibleLine, RDP_TOLERANCE);
+                List<Point> chaikenPoints = Chaiken.smooth(keptPoints, visibleLine.isClosed(), CHAIKEN_ITERATIONS);
+
+                processedContourLines.add(new Attributed<>(
+                        buildPolyLine(chaikenPoints, visibleLine.isClosed()),
+                        contourLine.attributes()));
+            }
+        }
+
+        return processedContourLines;
+    }
+
+    private static PolyLine buildPolyLine(List<Point> points, boolean closed) {
+        PolyLine.Builder builder = new PolyLine.Builder();
+        points.forEach(builder::addPoint);
+        return closed ? builder.buildClosed() : builder.buildOpen();
     }
 
     public List<Attributed<PolyLine>> contourLines() {
